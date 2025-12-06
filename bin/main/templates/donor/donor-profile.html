@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - Sabaiko Blood Bank</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-danger">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="bi bi-heart-pulse"></i> Sabaiko Blood Bank
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" th:href="@{/donor/profile}">My Profile</a>
+                <form th:action="@{/logout}" method="post" class="d-inline">
+                    <button type="submit" class="btn btn-link nav-link text-white">Logout</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <img th:if="${donorDetails != null && donorDetails.profileImage != null}" 
+                             th:src="@{'/uploads/' + ${donorDetails.profileImage}}" 
+                             class="img-fluid rounded-circle mb-3" 
+                             style="width: 150px; height: 150px; object-fit: cover;">
+                        <h4 th:text="${user.fullName}">Name</h4>
+                        <p class="text-muted" th:text="${user.email}">Email</p>
+                        <p th:text="${user.phone}">Phone</p>
+                        <div th:if="${donorDetails != null}">
+                            <p><strong>Blood Group:</strong> <span th:text="${donorDetails.bloodGroup.displayName}"></span></p>
+                            <p><strong>Stars:</strong> 
+                                <span th:each="i : ${#numbers.sequence(1, donorDetails.stars)}">
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                </span>
+                            </p>
+                            <p><strong>Availability:</strong> 
+                                <span th:if="${donorDetails.availability}" class="badge bg-success">Available</span>
+                                <span th:unless="${donorDetails.availability}" class="badge bg-danger">Not Available</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between">
+                        <h5>Profile Details</h5>
+                        <a th:href="@{/donor/edit}" class="btn btn-sm btn-primary">Edit Profile</a>
+                    </div>
+                    <div class="card-body">
+                        <div th:if="${donorDetails != null}">
+                            <p><strong>Address:</strong> <span th:text="${donorDetails.address ?: 'Not provided'}"></span></p>
+                            <p><strong>City:</strong> <span th:text="${donorDetails.city ?: 'Not provided'}"></span></p>
+                            <p><strong>State:</strong> <span th:text="${donorDetails.state ?: 'Not provided'}"></span></p>
+                            <p><strong>Zip Code:</strong> <span th:text="${donorDetails.zipCode ?: 'Not provided'}"></span></p>
+                            <p><strong>Date of Birth:</strong> <span th:text="${donorDetails.dateOfBirth ?: 'Not provided'}"></span></p>
+                            <p><strong>Medical History:</strong></p>
+                            <p th:text="${donorDetails.medicalHistory ?: 'Not provided'}"></p>
+                            <p th:if="${donorDetails.lastDonationDate != null}">
+                                <strong>Last Donation:</strong> <span th:text="${donorDetails.lastDonationDate}"></span>
+                            </p>
+                        </div>
+                        <div th:unless="${donorDetails != null}">
+                            <p class="text-muted">No profile details available. Please update your profile.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h5>Account Actions</h5>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{/donor/delete}" method="post" onsubmit="return confirm('Are you sure you want to delete your account?');">
+                            <button type="submit" class="btn btn-danger">Delete Account</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
+
