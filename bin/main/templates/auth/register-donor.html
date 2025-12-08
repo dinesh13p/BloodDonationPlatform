@@ -1,86 +1,145 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register as Donor - Sabaiko Blood Bank</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --primary: 348 83% 47%;
+            --primary-dark: 348 83% 37%;
+            --border: 214.3 31.8% 91.4%;
+            --gradient-hero: linear-gradient(135deg, hsl(348 83% 47%) 0%, hsl(0 70% 60%) 50%, hsl(355 70% 65%) 100%);
+            --shadow-glow: 0 0 40px hsl(348 83% 60% / 0.4);
+        }
+
+        .bg-gradient-hero {
+            background-image: var(--gradient-hero);
+        }
+
+        .bg-primary {
+            background-color: hsl(var(--primary));
+        }
+
+        .hover\:bg-primary-dark:hover {
+            background-color: hsl(var(--primary-dark));
+        }
+
+        .shadow-glow {
+            box-shadow: var(--shadow-glow);
+        }
+
+        .border-border {
+            border-color: hsl(var(--border));
+        }
+    </style>
 </head>
-<body class="bg-light">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-danger">
-        <div class="container">
-            <a class="navbar-brand" href="/">
-                <i class="bi bi-heart-pulse"></i> Sabaiko Blood Bank
-            </a>
-        </div>
-    </nav>
-    
-    <div class="container mt-5">
-        <div class="row justify-content-center">
-            <div class="col-md-7">
-                <div class="card shadow">
-                    <div class="card-body p-5">
-                        <h2 class="card-title text-center mb-4">Register as Donor</h2>
-                        
-                        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
-                        
-                        <form th:action="@{/auth/register/donor}" th:object="${registrationDTO}" method="post">
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="username" class="form-label">Username *</label>
-                                    <input type="text" class="form-control" id="username" th:field="*{username}" required>
-                                    <div th:if="${#fields.hasErrors('username')}" th:errors="*{username}" class="text-danger"></div>
-                                </div>
-                                
-                                <div class="col-md-6 mb-3">
-                                    <label for="email" class="form-label">Email *</label>
-                                    <input type="email" class="form-control" id="email" th:field="*{email}" required>
-                                    <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="text-danger"></div>
-                                </div>
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label for="password" class="form-label">Password *</label>
-                                <input type="password" class="form-control" id="password" th:field="*{password}" required>
-                                <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="text-danger"></div>
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label for="fullName" class="form-label">Full Name *</label>
-                                <input type="text" class="form-control" id="fullName" th:field="*{fullName}" required>
-                                <div th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}" class="text-danger"></div>
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label for="phone" class="form-label">Phone *</label>
-                                <input type="text" class="form-control" id="phone" th:field="*{phone}" required>
-                                <div th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}" class="text-danger"></div>
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label for="bloodGroup" class="form-label">Blood Group *</label>
-                                <select class="form-select" id="bloodGroup" th:field="*{bloodGroup}" required>
-                                    <option value="">Select Blood Group</option>
-                                    <option th:each="bg : ${bloodGroups}" th:value="${bg}" th:text="${bg.displayName}"></option>
-                                </select>
-                                <div th:if="${#fields.hasErrors('bloodGroup')}" th:errors="*{bloodGroup}" class="text-danger"></div>
-                            </div>
-                            
-                            <button type="submit" class="btn btn-danger w-100 mb-3">Register</button>
-                        </form>
-                        
-                        <div class="text-center">
-                            <p>Already have an account? <a th:href="@{/auth/login}">Login here</a></p>
-                        </div>
+
+<body class="min-h-screen bg-gradient-hero overflow-hidden relative">
+    <!-- Background decorations -->
+    <div class="absolute inset-0 overflow-hidden">
+        <div class="absolute -top-10 -left-10 w-40 h-40 bg-white/10 rounded-full blur-xl"></div>
+        <div class="absolute top-20 right-20 w-32 h-32 bg-white/10 rounded-full blur-lg"></div>
+        <div class="absolute bottom-40 left-20 w-24 h-24 bg-white/10 rounded-full blur-md"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="relative z-50 bg-transparent">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center">
+                        <div class="w-4 h-4 bg-primary rounded-full"></div>
                     </div>
+                    <span class="text-white font-bold text-xl">SABAIKO</span>
+                    <span class="text-white text-sm">Blood Bank</span>
                 </div>
             </div>
         </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="relative z-10 max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="bg-white rounded-2xl shadow-glow p-8">
+            <h2 class="text-3xl font-bold text-center mb-6">Register as Donor</h2>
+
+            <div th:if="${error}" class="bg-red-50 border border-red-200 text-red-700 rounded-md p-4 mb-4"
+                th:text="${error}"></div>
+
+            <form th:action="@{/auth/register/donor}" th:object="${registrationDTO}" method="post" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="username" class="block text-sm font-medium mb-1">Username *</label>
+                        <input type="text" id="username" th:field="*{username}" required
+                            class="w-full h-12 px-3 border border-border rounded-md focus:ring-2 focus:ring-primary" />
+                        <div th:if="${#fields.hasErrors('username')}" th:errors="*{username}"
+                            class="text-red-600 text-sm mt-1"></div>
+                    </div>
+
+                    <div>
+                        <label for="email" class="block text-sm font-medium mb-1">Email *</label>
+                        <input type="email" id="email" th:field="*{email}" required
+                            class="w-full h-12 px-3 border border-border rounded-md focus:ring-2 focus:ring-primary" />
+                        <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}"
+                            class="text-red-600 text-sm mt-1"></div>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="password" class="block text-sm font-medium mb-1">Password *</label>
+                    <input type="password" id="password" th:field="*{password}" required
+                        class="w-full h-12 px-3 border border-border rounded-md focus:ring-2 focus:ring-primary" />
+                    <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}"
+                        class="text-red-600 text-sm mt-1"></div>
+                </div>
+
+                <div>
+                    <label for="fullName" class="block text-sm font-medium mb-1">Full Name *</label>
+                    <input type="text" id="fullName" th:field="*{fullName}" required
+                        class="w-full h-12 px-3 border border-border rounded-md focus:ring-2 focus:ring-primary" />
+                    <div th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}"
+                        class="text-red-600 text-sm mt-1"></div>
+                </div>
+
+                <div>
+                    <label for="phone" class="block text-sm font-medium mb-1">Phone *</label>
+                    <input type="text" id="phone" th:field="*{phone}" required
+                        class="w-full h-12 px-3 border border-border rounded-md focus:ring-2 focus:ring-primary" />
+                    <div th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}" class="text-red-600 text-sm mt-1">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="address" class="block text-sm font-medium mb-1">Address *</label>
+                    <input type="text" id="address" th:field="*{address}" required
+                        class="w-full h-12 px-3 border border-border rounded-md focus:ring-2 focus:ring-primary" />
+                    <div th:if="${#fields.hasErrors('address')}" th:errors="*{address}"
+                        class="text-red-600 text-sm mt-1"></div>
+                </div>
+
+                <div>
+                    <label for="bloodGroup" class="block text-sm font-medium mb-1">Blood Group *</label>
+                    <select id="bloodGroup" th:field="*{bloodGroup}" required
+                        class="w-full h-12 px-3 border border-border rounded-md focus:ring-2 focus:ring-primary">
+                        <option value="">Select Blood Group</option>
+                        <option th:each="bg : ${bloodGroups}" th:value="${bg}" th:text="${bg.displayName}"></option>
+                    </select>
+                    <div th:if="${#fields.hasErrors('bloodGroup')}" th:errors="*{bloodGroup}"
+                        class="text-red-600 text-sm mt-1"></div>
+                </div>
+
+                <button type="submit"
+                    class="w-full h-12 bg-primary hover:bg-primary-dark text-white font-semibold rounded-md shadow-lg">Register</button>
+            </form>
+
+            <div class="text-center mt-4">
+                <p>Already have an account? <a th:href="@{/auth/login}"
+                        class="text-primary hover:underline font-medium">Login here</a></p>
+            </div>
+        </div>
     </div>
-    
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
-
-

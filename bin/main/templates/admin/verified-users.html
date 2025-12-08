@@ -1,123 +1,176 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Verified Users - Sabaiko Blood Bank</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --primary: 348 83% 47%;
+            --gradient-hero: linear-gradient(135deg, hsl(348 83% 47%) 0%, hsl(0 70% 60%) 50%, hsl(355 70% 65%) 100%);
+        }
+
+        .bg-gradient-hero {
+            background-image: var(--gradient-hero);
+        }
+
+        .bg-primary {
+            background-color: hsl(var(--primary));
+        }
+    </style>
 </head>
-<body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-danger">
-        <div class="container">
-            <a class="navbar-brand" href="/">
-                <i class="bi bi-heart-pulse"></i> Sabaiko Blood Bank
-            </a>
-            <div class="navbar-nav ms-auto">
-                <a class="nav-link" th:href="@{/admin/dashboard}">Dashboard</a>
-                <a class="nav-link" th:href="@{/admin/pending}">Pending Users</a>
-                <a class="nav-link" th:href="@{/admin/verified}">Verified Users</a>
-                <form th:action="@{/logout}" method="post" class="d-inline">
-                    <button type="submit" class="btn btn-link nav-link text-white">Logout</button>
-                </form>
+
+<body class="min-h-screen bg-gray-50">
+    <nav class="bg-gradient-hero shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center">
+                        <div class="w-4 h-4 bg-primary rounded-full"></div>
+                    </div>
+                    <span class="text-white font-bold text-xl">SABAIKO</span>
+                    <span class="text-white text-sm">Blood Bank</span>
+                </div>
+                <div class="flex items-center space-x-6">
+                    <a th:href="@{/admin/dashboard}"
+                        class="text-white hover:text-white/80 px-3 py-2 text-sm font-medium">Dashboard</a>
+                    <a th:href="@{/admin/pending}"
+                        class="text-white hover:text-white/80 px-3 py-2 text-sm font-medium">Pending Users</a>
+                    <a th:href="@{/admin/verified}"
+                        class="text-white hover:text-white/80 px-3 py-2 text-sm font-medium">Verified Users</a>
+                    <form th:action="@{/logout}" method="post" class="inline">
+                        <button type="submit"
+                            class="text-white hover:text-white/80 px-3 py-2 text-sm font-medium">Logout</button>
+                    </form>
+                </div>
             </div>
         </div>
     </nav>
-    
-    <div class="container mt-4">
-        <h2 class="mb-4">Verified Users</h2>
-        
-        <ul class="nav nav-tabs mb-3">
-            <li class="nav-item">
-                <a class="nav-link active" data-bs-toggle="tab" href="#donors">Donors</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" data-bs-toggle="tab" href="#receivers">Receivers</a>
-            </li>
-        </ul>
-        
-        <div class="tab-content">
-            <div class="tab-pane fade show active" id="donors">
-                <div class="card">
-                    <div class="card-body">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Email</th>
-                                    <th>Blood Group</th>
-                                    <th>Stars</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr th:each="donor : ${donors}">
-                                    <td th:text="${donor.user.fullName}"></td>
-                                    <td th:text="${donor.user.email}"></td>
-                                    <td th:text="${donor.bloodGroup.displayName}"></td>
-                                    <td>
-                                        <span th:each="i : ${#numbers.sequence(1, donor.stars)}">
-                                            <i class="bi bi-star-fill text-warning"></i>
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <form th:action="@{/admin/add-star}" method="post" class="d-inline">
-                                            <input type="hidden" name="donorId" th:value="${donor.user.id}">
-                                            <button type="submit" class="btn btn-sm btn-warning">Add Star</button>
-                                        </form>
-                                        <form th:action="@{/admin/restrict}" method="post" class="d-inline">
-                                            <input type="hidden" name="userId" th:value="${donor.user.id}">
-                                            <button type="submit" class="btn btn-sm btn-danger">Restrict</button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <h2 class="text-3xl font-bold mb-6">Verified Users</h2>
+
+        <!-- Tabs -->
+        <div class="mb-6">
+            <div class="border-b border-gray-200">
+                <nav class="-mb-px flex space-x-8">
+                    <button onclick="showTab('donors')" id="donors-tab"
+                        class="border-b-2 border-primary text-primary py-4 px-1 text-sm font-medium">Donors</button>
+                    <button onclick="showTab('receivers')" id="receivers-tab"
+                        class="border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 py-4 px-1 text-sm font-medium">Receivers</button>
+                </nav>
             </div>
-            
-            <div class="tab-pane fade" id="receivers">
-                <div class="card">
-                    <div class="card-body">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Email</th>
-                                    <th>Blood Group Needed</th>
-                                    <th>Verified</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr th:each="receiver : ${receivers}">
-                                    <td th:text="${receiver.user.fullName}"></td>
-                                    <td th:text="${receiver.user.email}"></td>
-                                    <td th:text="${receiver.bloodGroupNeeded.displayName}"></td>
-                                    <td>
-                                        <span th:if="${receiver.verified}" class="badge bg-success">
-                                            <i class="bi bi-check-circle"></i> Verified
-                                        </span>
-                                        <span th:unless="${receiver.verified}" class="badge bg-warning">Pending</span>
-                                    </td>
-                                    <td>
-                                        <form th:action="@{/admin/restrict}" method="post" class="d-inline">
-                                            <input type="hidden" name="userId" th:value="${receiver.user.id}">
-                                            <button type="submit" class="btn btn-sm btn-danger">Restrict</button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+        </div>
+
+        <!-- Donors Table -->
+        <div id="donors-content" class="bg-white rounded-lg shadow border border-gray-200 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="min-w-full">
+                    <thead class="bg-gray-50 border-b border-gray-200">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Blood Group</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Stars</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <tr th:each="donor : ${donors}" class="hover:bg-gray-50">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium"
+                                th:text="${donor.user.fullName}"></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600" th:text="${donor.user.email}">
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm" th:text="${donor.bloodGroup.displayName}">
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span th:each="i : ${#numbers.sequence(1, donor.stars)}">
+                                    <svg class="inline-block w-4 h-4 text-yellow-500" fill="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path
+                                            d="M12 .587l3.668 7.431 8.2 1.193-5.934 5.788 1.402 8.162L12 18.896l-7.336 3.865 1.402-8.162L.132 9.211l8.2-1.193L12 .587z" />
+                                    </svg>
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium flex gap-2">
+                                <form th:action="@{/admin/add-star}" method="post" class="inline">
+                                    <input type="hidden" name="donorId" th:value="${donor.user.id}">
+                                    <button type="submit"
+                                        class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded text-xs font-semibold">Add
+                                        Star</button>
+                                </form>
+                                <form th:action="@{/admin/restrict}" method="post" class="inline">
+                                    <input type="hidden" name="userId" th:value="${donor.user.id}">
+                                    <button type="submit"
+                                        class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-xs font-semibold">Restrict</button>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Receivers Table -->
+        <div id="receivers-content" class="hidden bg-white rounded-lg shadow border border-gray-200 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="min-w-full">
+                    <thead class="bg-gray-50 border-b border-gray-200">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Blood Group
+                                Needed</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <tr th:each="receiver :${receivers}" class="hover:bg-gray-50">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium"
+                                th:text="${receiver.user.fullName}"></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600"
+                                th:text="${receiver.user.email}"></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm"
+                                th:text="${receiver.province != null ? receiver.province : 'N/A'}"></td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span th:if="${receiver.verified}"
+                                    class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">✓
+                                    Verified</span>
+                                <span th:unless="${receiver.verified}"
+                                    class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">Pending</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <form th:action="@{/admin/restrict}" method="post" class="inline">
+                                    <input type="hidden" name="userId" th:value="${receiver.user.id}">
+                                    <button type="submit"
+                                        class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-xs font-semibold">Restrict</button>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
-    
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        function showTab(tab) {
+            if (tab === 'donors') {
+                document.getElementById('donors-content').classList.remove('hidden');
+                document.getElementById('receivers-content').classList.add('hidden');
+                document.getElementById('donors-tab').className = 'border-b-2 border-primary text-primary py-4 px-1 text-sm font-medium';
+                document.getElementById('receivers-tab').className = 'border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 py-4 px-1 text-sm font-medium';
+            } else {
+                document.getElementById('donors-content').classList.add('hidden');
+                document.getElementById('receivers-content').classList.remove('hidden');
+                document.getElementById('receivers-tab').className = 'border-b-2 border-primary text-primary py-4 px-1 text-sm font-medium';
+                document.getElementById('donors-tab').className = 'border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 py-4 px-1 text-sm font-medium';
+            }
+        }
+    </script>
 </body>
+
 </html>
-
-

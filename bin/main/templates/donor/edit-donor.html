@@ -1,108 +1,153 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Profile - Sabaiko Blood Bank</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --primary: 348 83% 47%;
+            --border: 214.3 31.8% 91.4%;
+            --gradient-hero: linear-gradient(135deg, hsl(348 83% 47%) 0%, hsl(0 70% 60%) 50%, hsl(355 70% 65%) 100%);
+        }
+
+        .bg-gradient-hero {
+            background-image: var(--gradient-hero);
+        }
+
+        .bg-primary {
+            background-color: hsl(var(--primary));
+        }
+
+        .border-border {
+            border-color: hsl(var(--border));
+        }
+    </style>
 </head>
-<body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-danger">
-        <div class="container">
-            <a class="navbar-brand" href="/">
-                <i class="bi bi-heart-pulse"></i> Sabaiko Blood Bank
-            </a>
-            <div class="navbar-nav ms-auto">
-                <a class="nav-link" th:href="@{/donor/profile}">My Profile</a>
-                <form th:action="@{/logout}" method="post" class="d-inline">
-                    <button type="submit" class="btn btn-link nav-link text-white">Logout</button>
-                </form>
-            </div>
-        </div>
-    </nav>
-    
-    <div class="container mt-4">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card">
-                    <div class="card-header">
-                        <h5>Edit Profile</h5>
+
+<body class="min-h-screen bg-gray-50">
+    <nav class="bg-gradient-hero shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center">
+                        <div class="w-4 h-4 bg-primary rounded-full"></div>
                     </div>
-                    <div class="card-body">
-                        <form th:action="@{/donor/update}" method="post" enctype="multipart/form-data">
-                            <div class="mb-3">
-                                <label for="profileImage" class="form-label">Profile Image</label>
-                                <input type="file" class="form-control" id="profileImage" name="profileImage" accept="image/*">
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label for="bloodGroup" class="form-label">Blood Group</label>
-                                <select class="form-select" id="bloodGroup" name="bloodGroup">
-                                    <option th:each="bg : ${bloodGroups}" 
-                                            th:value="${bg.name()}" 
-                                            th:text="${bg.displayName}"
-                                            th:selected="${donorDetails != null && donorDetails.bloodGroup == bg}"></option>
-                                </select>
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label for="dateOfBirth" class="form-label">Date of Birth</label>
-                                <input type="date" class="form-control" id="dateOfBirth" name="dateOfBirth"
-                                       th:value="${donorDetails != null ? donorDetails.dateOfBirth : ''}">
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label for="address" class="form-label">Address</label>
-                                <input type="text" class="form-control" id="address" name="address"
-                                       th:value="${donorDetails != null ? donorDetails.address : ''}">
-                            </div>
-                            
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="city" class="form-label">City</label>
-                                    <input type="text" class="form-control" id="city" name="city"
-                                           th:value="${donorDetails != null ? donorDetails.city : ''}">
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="state" class="form-label">State</label>
-                                    <input type="text" class="form-control" id="state" name="state"
-                                           th:value="${donorDetails != null ? donorDetails.state : ''}">
-                                </div>
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label for="zipCode" class="form-label">Zip Code</label>
-                                <input type="text" class="form-control" id="zipCode" name="zipCode"
-                                       th:value="${donorDetails != null ? donorDetails.zipCode : ''}">
-                            </div>
-                            
-                            <div class="mb-3">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="availability" name="availability" value="true"
-                                           th:checked="${donorDetails != null && donorDetails.availability}">
-                                    <label class="form-check-label" for="availability">
-                                        Available for donation
-                                    </label>
-                                </div>
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label for="medicalHistory" class="form-label">Medical History</label>
-                                <textarea class="form-control" id="medicalHistory" name="medicalHistory" rows="4"
-                                          th:text="${donorDetails != null ? donorDetails.medicalHistory : ''}"></textarea>
-                            </div>
-                            
-                            <button type="submit" class="btn btn-danger">Update Profile</button>
-                            <a th:href="@{/donor/profile}" class="btn btn-secondary">Cancel</a>
-                        </form>
-                    </div>
+                    <span class="text-white font-bold text-xl">SABAIKO</span>
+                    <span class="text-white text-sm">Blood Bank</span>
+                </div>
+                <div class="flex items-center space-x-6">
+                    <a th:href="@{/donor/profile}"
+                        class="text-white hover:text-white/80 px-3 py-2 text-sm font-medium">My Profile</a>
+                    <form th:action="@{/logout}" method="post" class="inline">
+                        <button type="submit"
+                            class="text-white hover:text-white/80 px-3 py-2 text-sm font-medium">Logout</button>
+                    </form>
                 </div>
             </div>
         </div>
-    </div>
-    
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+    </nav>
 
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="bg-white rounded-lg shadow border border-gray-200">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h5 class="text-lg font-semibold">Edit Profile</h5>
+            </div>
+            <div class="p-6">
+                <form th:action="@{/donor/update}" method="post" enctype="multipart/form-data" class="space-y-4">
+                    <div>
+                        <label for="profileImage" class="block text-sm font-medium mb-1">Profile Image</label>
+                        <input type="file" id="profileImage" name="profileImage" accept="image/*"
+                            class="w-full px-3 py-2 border border-border rounded-md" />
+                    </div>
+
+                    <div>
+                        <label for="bloodGroup" class="block text-sm font-medium mb-1">Blood Group</label>
+                        <select id="bloodGroup" name="bloodGroup"
+                            class="w-full h-12 px-3 border border-border rounded-md">
+                            <option value="">Select Blood Group</option>
+                            <option th:each="bg : ${bloodGroups}" th:value="${bg.name()}" th:text="${bg.displayName}"
+                                th:selected="${donorDetails != null and donorDetails.bloodGroup == bg}"></option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="dateOfBirth" class="block text-sm font-medium mb-1">Date of Birth</label>
+                        <input type="date" id="dateOfBirth" name="dateOfBirth"
+                            th:value="${donorDetails != null ? donorDetails.dateOfBirth : ''}"
+                            class="w-full h-12 px-3 border border-border rounded-md" />
+                    </div>
+
+                    <div>
+                        <label for="address" class="block text-sm font-medium mb-1">Address</label>
+                        <input type="text" id="address" name="address"
+                            th:value="${donorDetails != null ? donorDetails.address : ''}"
+                            class="w-full h-12 px-3 border border-border rounded-md" />
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="province" class="block text-sm font-medium mb-1">Province</label>
+                            <input type="text" id="province" name="province"
+                                th:value="${donorDetails != null ? donorDetails.province : ''}"
+                                class="w-full h-12 px-3 border border-border rounded-md" />
+                        </div>
+                        <div>
+                            <label for="district" class="block text-sm font-medium mb-1">District</label>
+                            <input type="text" id="district" name="district"
+                                th:value="${donorDetails != null ? donorDetails.district : ''}"
+                                class="w-full h-12 px-3 border border-border rounded-md" />
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="palika" class="block text-sm font-medium mb-1">Palika (Municipality)</label>
+                        <input type="text" id="palika" name="palika"
+                            th:value="${donorDetails != null ? donorDetails.palika : ''}"
+                            class="w-full h-12 px-3 border border-border rounded-md" />
+                    </div>
+
+                    <div>
+                        <label for="wardNo" class="block text-sm font-medium mb-1">Ward No.</label>
+                        <input type="text" id="wardNo" name="wardNo"
+                            th:value="${donorDetails != null ? donorDetails.wardNo : ''}"
+                            class="w-full h-12 px-3 border border-border rounded-md" />
+                    </div>
+
+                    <div class="flex items-center">
+                        <input type="checkbox" id="availability" name="availability" value="true"
+                            th:checked="${donorDetails != null && donorDetails.availability}"
+                            class="w-4 h-4 text-primary border-gray-300 rounded" />
+                        <label for="availability" class="ml-2 text-sm font-medium">Available for donation</label>
+                    </div>
+
+                    <div>
+                        <label for="medicalHistory" class="block text-sm font-medium mb-1">Medical History</label>
+                        <textarea id="medicalHistory" name="medicalHistory" rows="4"
+                            class="w-full px-3 py-2 border border-border rounded-md"
+                            th:text="${donorDetails != null ? donorDetails.medicalHistory : ''}"></textarea>
+                    </div>
+
+                    <div>
+                        <label for="bio" class="block text-sm font-medium mb-1">Bio</label>
+                        <textarea id="bio" name="bio" rows="3"
+                            class="w-full px-3 py-2 border border-border rounded-md"
+                            th:text="${donorDetails != null ? donorDetails.bio : ''}"></textarea>
+                    </div>
+
+                    <div class="flex gap-4">
+                        <button type="submit"
+                            class="bg-primary hover:bg-primary/90 text-white px-6 py-2 rounded font-semibold">Update
+                            Profile</button>
+                        <a th:href="@{/donor/profile}"
+                            class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded font-semibold inline-block">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

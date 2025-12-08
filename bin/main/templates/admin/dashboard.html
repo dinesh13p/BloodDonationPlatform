@@ -1,144 +1,177 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - Sabaiko Blood Bank</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --background: 0 0% 100%;
+            --foreground: 222.2 84% 4.9%;
+            --primary: 348 83% 47%;
+            --primary-dark: 348 83% 37%;
+            --muted-foreground: 215.4 16.3% 46.9%;
+            --border: 214.3 31.8% 91.4%;
+            --gradient-hero: linear-gradient(135deg, hsl(348 83% 47%) 0%, hsl(0 70% 60%) 50%, hsl(355 70% 65%) 100%);
+        }
+
+        .bg-gradient-hero {
+            background-image: var(--gradient-hero);
+        }
+
+        .bg-primary {
+            background-color: hsl(var(--primary));
+        }
+
+        .text-primary {
+            color: hsl(var(--primary));
+        }
+
+        .hover\:bg-primary-dark:hover {
+            background-color: hsl(var(--primary-dark));
+        }
+
+        .text-muted-foreground {
+            color: hsl(var(--muted-foreground));
+        }
+
+        .border-border {
+            border-color: hsl(var(--border));
+        }
+    </style>
 </head>
-<body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-danger">
-        <div class="container">
-            <a class="navbar-brand" href="/">
-                <i class="bi bi-heart-pulse"></i> Sabaiko Blood Bank
-            </a>
-            <div class="navbar-nav ms-auto">
-                <a class="nav-link" th:href="@{/admin/dashboard}">Dashboard</a>
-                <a class="nav-link" th:href="@{/admin/pending}">Pending Users</a>
-                <a class="nav-link" th:href="@{/admin/verified}">Verified Users</a>
-                <form th:action="@{/logout}" method="post" class="d-inline">
-                    <button type="submit" class="btn btn-link nav-link text-white">Logout</button>
-                </form>
+
+<body class="min-h-screen bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-gradient-hero shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center">
+                        <div class="w-4 h-4 bg-primary rounded-full"></div>
+                    </div>
+                    <span class="text-white font-bold text-xl">SABAIKO</span>
+                    <span class="text-white text-sm">Blood Bank</span>
+                </div>
+                <div class="flex items-center space-x-6">
+                    <a th:href="@{/admin/dashboard}"
+                        class="text-white hover:text-white/80 px-3 py-2 text-sm font-medium">Dashboard</a>
+                    <a th:href="@{/admin/pending}"
+                        class="text-white hover:text-white/80 px-3 py-2 text-sm font-medium">Pending Users</a>
+                    <a th:href="@{/admin/verified}"
+                        class="text-white hover:text-white/80 px-3 py-2 text-sm font-medium">Verified Users</a>
+                    <form th:action="@{/logout}" method="post" class="inline">
+                        <button type="submit"
+                            class="text-white hover:text-white/80 px-3 py-2 text-sm font-medium">Logout</button>
+                    </form>
+                </div>
             </div>
         </div>
     </nav>
-    
-    <div class="container mt-4">
-        <h2 class="mb-4">Admin Dashboard</h2>
-        
-        <div class="row mb-4">
-            <div class="col-md-3">
-                <div class="card text-white bg-danger">
-                    <div class="card-body">
-                        <h5 class="card-title">Pending Donors</h5>
-                        <h3 th:text="${#lists.size(pendingDonors)}">0</h3>
-                    </div>
-                </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <h2 class="text-3xl font-bold mb-6">Admin Dashboard</h2>
+
+        <!-- Statistics Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+            <div class="bg-gradient-to-br from-red-500 to-red-600 text-white rounded-lg shadow-lg p-6">
+                <h5 class="text-sm font-medium mb-2 opacity-90">Pending Donors</h5>
+                <h3 class="text-4xl font-bold" th:text="${#lists.size(pendingDonors)}">0</h3>
             </div>
-            <div class="col-md-3">
-                <div class="card text-white bg-warning">
-                    <div class="card-body">
-                        <h5 class="card-title">Pending Receivers</h5>
-                        <h3 th:text="${#lists.size(pendingReceivers)}">0</h3>
-                    </div>
-                </div>
+            <div class="bg-gradient-to-br from-yellow-500 to-yellow-600 text-white rounded-lg shadow-lg p-6">
+                <h5 class="text-sm font-medium mb-2 opacity-90">Pending Receivers</h5>
+                <h3 class="text-4xl font-bold" th:text="${#lists.size(pendingReceivers)}">0</h3>
             </div>
-            <div class="col-md-3">
-                <div class="card text-white bg-success">
-                    <div class="card-body">
-                        <h5 class="card-title">Total Donors</h5>
-                        <h3 th:text="${#lists.size(allDonors)}">0</h3>
-                    </div>
-                </div>
+            <div class="bg-gradient-to-br from-green-500 to-green-600 text-white rounded-lg shadow-lg p-6">
+                <h5 class="text-sm font-medium mb-2 opacity-90">Total Donors</h5>
+                <h3 class="text-4xl font-bold" th:text="${#lists.size(allDonors)}">0</h3>
             </div>
-            <div class="col-md-3">
-                <div class="card text-white bg-info">
-                    <div class="card-body">
-                        <h5 class="card-title">Total Receivers</h5>
-                        <h3 th:text="${#lists.size(allReceivers)}">0</h3>
-                    </div>
-                </div>
+            <div class="bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-lg shadow-lg p-6">
+                <h5 class="text-sm font-medium mb-2 opacity-90">Total Receivers</h5>
+                <h3 class="text-4xl font-bold" th:text="${#lists.size(allReceivers)}">0</h3>
             </div>
         </div>
-        
-        <div class="row">
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header">
-                        <h5>Pending Donors</h5>
-                    </div>
-                    <div class="card-body">
-                        <div th:if="${#lists.isEmpty(pendingDonors)}" class="text-muted">No pending donors</div>
-                        <table th:if="${!#lists.isEmpty(pendingDonors)}" class="table table-sm">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Email</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr th:each="donor : ${pendingDonors}">
-                                    <td th:text="${donor.fullName}"></td>
-                                    <td th:text="${donor.email}"></td>
-                                    <td>
-                                        <form th:action="@{/admin/approve}" method="post" class="d-inline">
-                                            <input type="hidden" name="userId" th:value="${donor.id}">
-                                            <button type="submit" class="btn btn-sm btn-success">Approve</button>
-                                        </form>
-                                        <form th:action="@{/admin/reject}" method="post" class="d-inline">
-                                            <input type="hidden" name="userId" th:value="${donor.id}">
-                                            <button type="submit" class="btn btn-sm btn-danger">Reject</button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+
+        <!-- Pending Users Tables -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Pending Donors -->
+            <div class="bg-white rounded-lg shadow border border-gray-200">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h5 class="text-lg font-semibold">Pending Donors</h5>
+                </div>
+                <div class="p-6">
+                    <div th:if="${#lists.isEmpty(pendingDonors)}" class="text-muted-foreground">No pending donors</div>
+                    <table th:if="${!#lists.isEmpty(pendingDonors)}" class="min-w-full text-sm">
+                        <thead>
+                            <tr class="text-left text-muted-foreground border-b border-gray-200">
+                                <th class="pb-3 pr-4 font-medium">Name</th>
+                                <th class="pb-3 pr-4 font-medium">Email</th>
+                                <th class="pb-3 font-medium">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="donor : ${pendingDonors}" class="border-b border-gray-100">
+                                <td class="py-3 pr-4" th:text="${donor.fullName}"></td>
+                                <td class="py-3 pr-4" th:text="${donor.email}"></td>
+                                <td class="py-3 flex gap-2">
+                                    <form th:action="@{/admin/approve}" method="post" class="inline">
+                                        <input type="hidden" name="userId" th:value="${donor.id}">
+                                        <button type="submit"
+                                            class="bg-green-600 hover:bg-green-700 text-white text-xs font-semibold px-3 py-1 rounded">Approve</button>
+                                    </form>
+                                    <form th:action="@{/admin/reject}" method="post" class="inline">
+                                        <input type="hidden" name="userId" th:value="${donor.id}">
+                                        <button type="submit"
+                                            class="bg-red-600 hover:bg-red-700 text-white text-xs font-semibold px-3 py-1 rounded">Reject</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
-            
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header">
-                        <h5>Pending Receivers</h5>
+
+            <!-- Pending Receivers -->
+            <div class="bg-white rounded-lg shadow border border-gray-200">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h5 class="text-lg font-semibold">Pending Receivers</h5>
+                </div>
+                <div class="p-6">
+                    <div th:if="${#lists.isEmpty(pendingReceivers)}" class="text-muted-foreground">No pending receivers
                     </div>
-                    <div class="card-body">
-                        <div th:if="${#lists.isEmpty(pendingReceivers)}" class="text-muted">No pending receivers</div>
-                        <table th:if="${!#lists.isEmpty(pendingReceivers)}" class="table table-sm">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Email</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr th:each="receiver : ${pendingReceivers}">
-                                    <td th:text="${receiver.fullName}"></td>
-                                    <td th:text="${receiver.email}"></td>
-                                    <td>
-                                        <form th:action="@{/admin/approve}" method="post" class="d-inline">
-                                            <input type="hidden" name="userId" th:value="${receiver.id}">
-                                            <button type="submit" class="btn btn-sm btn-success">Approve</button>
-                                        </form>
-                                        <form th:action="@{/admin/reject}" method="post" class="d-inline">
-                                            <input type="hidden" name="userId" th:value="${receiver.id}">
-                                            <button type="submit" class="btn btn-sm btn-danger">Reject</button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                    <table th:if="${!#lists.isEmpty(pendingReceivers)}" class="min-w-full text-sm">
+                        <thead>
+                            <tr class="text-left text-muted-foreground border-b border-gray-200">
+                                <th class="pb-3 pr-4 font-medium">Name</th>
+                                <th class="pb-3 pr-4 font-medium">Email</th>
+                                <th class="pb-3 font-medium">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="receiver : ${pendingReceivers}" class="border-b border-gray-100">
+                                <td class="py-3 pr-4" th:text="${receiver.fullName}"></td>
+                                <td class="py-3 pr-4" th:text="${receiver.email}"></td>
+                                <td class="py-3 flex gap-2">
+                                    <form th:action="@{/admin/approve}" method="post" class="inline">
+                                        <input type="hidden" name="userId" th:value="${receiver.id}">
+                                        <button type="submit"
+                                            class="bg-green-600 hover:bg-green-700 text-white text-xs font-semibold px-3 py-1 rounded">Approve</button>
+                                    </form>
+                                    <form th:action="@{/admin/reject}" method="post" class="inline">
+                                        <input type="hidden" name="userId" th:value="${receiver.id}">
+                                        <button type="submit"
+                                            class="bg-red-600 hover:bg-red-700 text-white text-xs font-semibold px-3 py-1 rounded">Reject</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
-    
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
-
-

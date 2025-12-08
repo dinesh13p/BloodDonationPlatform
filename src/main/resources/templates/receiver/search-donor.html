@@ -44,15 +44,25 @@
                                         th:selected="${selectedBloodGroup == bg.name()}"></option>
                             </select>
                         </div>
-                        <div class="col-md-4 mb-3">
-                            <label for="city" class="form-label">City</label>
-                            <input type="text" class="form-control" id="city" name="city" 
-                                   th:value="${selectedCity}">
+                        <div class="col-md-3 mb-3">
+                            <label for="province" class="form-label">Province</label>
+                            <input type="text" class="form-control" id="province" name="province" 
+                                   th:value="${selectedProvince}">
                         </div>
-                        <div class="col-md-4 mb-3">
-                            <label for="state" class="form-label">State</label>
-                            <input type="text" class="form-control" id="state" name="state"
-                                   th:value="${selectedState}">
+                        <div class="col-md-3 mb-3">
+                            <label for="district" class="form-label">District</label>
+                            <input type="text" class="form-control" id="district" name="district"
+                                   th:value="${selectedDistrict}">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="palika" class="form-label">Palika</label>
+                            <input type="text" class="form-control" id="palika" name="palika"
+                                   th:value="${selectedPalika}">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="wardNo" class="form-label">Ward No.</label>
+                            <input type="text" class="form-control" id="wardNo" name="wardNo"
+                                   th:value="${selectedWardNo}">
                         </div>
                     </div>
                     <button type="submit" class="btn btn-danger">Search</button>
@@ -74,8 +84,10 @@
                             <tr>
                                 <th>Name</th>
                                 <th>Blood Group</th>
-                                <th>City</th>
-                                <th>State</th>
+                                <th>Province</th>
+                                <th>District</th>
+                                <th>Palika</th>
+                                <th>Ward No.</th>
                                 <th>Phone</th>
                                 <th>Email</th>
                                 <th>Stars</th>
@@ -86,8 +98,10 @@
                             <tr th:each="donor : ${donors}">
                                 <td th:text="${donor.user.fullName}"></td>
                                 <td th:text="${donor.bloodGroup.displayName}"></td>
-                                <td th:text="${donor.city ?: 'N/A'}"></td>
-                                <td th:text="${donor.state ?: 'N/A'}"></td>
+                                <td th:text="${donor.province ?: 'N/A'}"></td>
+                                <td th:text="${donor.district ?: 'N/A'}"></td>
+                                <td th:text="${donor.palika ?: 'N/A'}"></td>
+                                <td th:text="${donor.wardNo ?: 'N/A'}"></td>
                                 <td th:text="${donor.user.phone}"></td>
                                 <td th:text="${donor.user.email}"></td>
                                 <td>

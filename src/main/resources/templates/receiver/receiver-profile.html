@@ -1,85 +1,116 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Profile - Sabaiko Blood Bank</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --primary: 348 83% 47%;
+            --gradient-hero: linear-gradient(135deg, hsl(348 83% 47%) 0%, hsl(0 70% 60%) 50%, hsl(355 70% 65%) 100%);
+        }
+
+        .bg-gradient-hero {
+            background-image: var(--gradient-hero);
+        }
+
+        .bg-primary {
+            background-color: hsl(var(--primary));
+        }
+    </style>
 </head>
-<body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-danger">
-        <div class="container">
-            <a class="navbar-brand" href="/">
-                <i class="bi bi-heart-pulse"></i> Sabaiko Blood Bank
-            </a>
-            <div class="navbar-nav ms-auto">
-                <a class="nav-link" th:href="@{/receiver/profile}">My Profile</a>
-                <a class="nav-link" th:href="@{/receiver/search}">Search Donors</a>
-                <form th:action="@{/logout}" method="post" class="d-inline">
-                    <button type="submit" class="btn btn-link nav-link text-white">Logout</button>
-                </form>
+
+<body class="min-h-screen bg-gray-50">
+    <nav class="bg-gradient-hero shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center">
+                        <div class="w-4 h-4 bg-primary rounded-full"></div>
+                    </div>
+                    <span class="text-white font-bold text-xl">SABAIKO</span>
+                    <span class="text-white text-sm">Blood Bank</span>
+                </div>
+                <div class="flex items-center space-x-6">
+                    <a th:href="@{/receiver/profile}"
+                        class="text-white hover:text-white/80 px-3 py-2 text-sm font-medium">My Profile</a>
+                    <a th:href="@{/receiver/search}"
+                        class="text-white hover:text-white/80 px-3 py-2 text-sm font-medium">Search Donors</a>
+                    <form th:action="@{/logout}" method="post" class="inline">
+                        <button type="submit"
+                            class="text-white hover:text-white/80 px-3 py-2 text-sm font-medium">Logout</button>
+                    </form>
+                </div>
             </div>
         </div>
     </nav>
-    
-    <div class="container mt-4">
-        <div class="row">
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-body text-center">
-                        <h4 th:text="${user.fullName}">Name</h4>
-                        <p class="text-muted" th:text="${user.email}">Email</p>
-                        <p th:text="${user.phone}">Phone</p>
-                        <div th:if="${receiverDetails != null}">
-                            <p><strong>Blood Group Needed:</strong> 
-                                <span th:text="${receiverDetails.bloodGroupNeeded.displayName}"></span>
-                            </p>
-                            <p>
-                                <span th:if="${receiverDetails.verified}" class="badge bg-success">
-                                    <i class="bi bi-check-circle"></i> Verified
-                                </span>
-                                <span th:unless="${receiverDetails.verified}" class="badge bg-warning">Pending Verification</span>
-                            </p>
-                        </div>
-                    </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="bg-white rounded-lg shadow border border-gray-200 p-6 text-center">
+                <h4 class="text-xl font-bold mb-1" th:text="${user.fullName}">Name</h4>
+                <p class="text-gray-600 text-sm mb-2" th:text="${user.email}">Email</p>
+                <p class="text-gray-800 mb-4" th:text="${user.phone}">Phone</p>
+
+                <div th:if="${receiverDetails != null}">
+                    <p>
+                        <span th:if="${receiverDetails.verified}"
+                            class="inline-block px-3 py-1 bg-green-100 text-green-800 text-sm font-semibold rounded-full">
+                            ✓ Verified
+                        </span>
+                        <span th:unless="${receiverDetails.verified}"
+                            class="inline-block px-3 py-1 bg-yellow-100 text-yellow-800 text-sm font-semibold rounded-full">Pending
+                            Verification</span>
+                    </p>
                 </div>
             </div>
-            
-            <div class="col-md-8">
-                <div class="card">
-                    <div class="card-header">
-                        <h5>Profile Details</h5>
+
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-lg shadow border border-gray-200">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h5 class="text-lg font-semibold">Profile Details</h5>
                     </div>
-                    <div class="card-body">
-                        <div th:if="${receiverDetails != null}">
-                            <p><strong>Address:</strong> <span th:text="${receiverDetails.address ?: 'Not provided'}"></span></p>
-                            <p><strong>City:</strong> <span th:text="${receiverDetails.city ?: 'Not provided'}"></span></p>
-                            <p><strong>State:</strong> <span th:text="${receiverDetails.state ?: 'Not provided'}"></span></p>
-                            <p><strong>Zip Code:</strong> <span th:text="${receiverDetails.zipCode ?: 'Not provided'}"></span></p>
+                    <div class="p-6">
+                        <div th:if="${receiverDetails != null}" class="space-y-3">
+                            <p><strong class="text-gray-700">Address:</strong> <span
+                                    th:text="${receiverDetails.address ?: 'Not provided'}"></span></p>
+                            <p><strong class="text-gray-700">Province:</strong> <span
+                                    th:text="${receiverDetails.province ?: 'Not provided'}"></span></p>
+                            <p><strong class="text-gray-700">District:</strong> <span
+                                    th:text="${receiverDetails.district ?: 'Not provided'}"></span></p>
+                            <p><strong class="text-gray-700">Palika:</strong> <span
+                                    th:text="${receiverDetails.palika ?: 'Not provided'}"></span></p>
+                            <p><strong class="text-gray-700">Ward No.:</strong> <span
+                                    th:text="${receiverDetails.wardNo ?: 'Not provided'}"></span></p>
+                            <p><strong class="text-gray-700">PAN:</strong> <span
+                                    th:text="${receiverDetails.pan ?: 'Not provided'}"></span></p>
+                            <p><strong class="text-gray-700">Bio:</strong></p>
+                            <p class="text-gray-600" th:text="${receiverDetails.bio ?: 'Not provided'}"></p>
                         </div>
                         <div th:unless="${receiverDetails != null}">
-                            <p class="text-muted">No profile details available.</p>
+                            <p class="text-gray-500">No profile details available.</p>
                         </div>
                     </div>
                 </div>
-                
-                <div class="card mt-3">
-                    <div class="card-header">
-                        <h5>Account Actions</h5>
+
+                <div class="bg-white rounded-lg shadow border border-gray-200 mt-6">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h5 class="text-lg font-semibold">Account Actions</h5>
                     </div>
-                    <div class="card-body">
-                        <form th:action="@{/receiver/delete}" method="post" onsubmit="return confirm('Are you sure you want to delete your account?');">
-                            <button type="submit" class="btn btn-danger">Delete Account</button>
+                    <div class="p-6">
+                        <form th:action="@{/receiver/delete}" method="post"
+                            onsubmit="return confirm('Are you sure you want to delete your account?');">
+                            <button type="submit"
+                                class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded font-semibold">Delete
+                                Account</button>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
-
-

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle} ?: 'Sabaiko Blood Bank'">Sabaiko Blood Bank</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Blood Bank Design System - CSS Custom Properties */
+        :root {
+            --background: 0 0% 100%;
+            --foreground: 222.2 84% 4.9%;
+
+            --card: 0 0% 100%;
+            --card-foreground: 222.2 84% 4.9%;
+
+            --popover: 0 0% 100%;
+            --popover-foreground: 222.2 84% 4.9%;
+
+            /* Blood Bank Theme Colors */
+            --primary: 348 83% 47%;
+            --primary-foreground: 0 0% 100%;
+            --primary-light: 348 83% 57%;
+            --primary-dark: 348 83% 37%;
+
+            --secondary: 0 70% 60%;
+            --secondary-foreground: 0 0% 100%;
+
+            --muted: 210 40% 96.1%;
+            --muted-foreground: 215.4 16.3% 46.9%;
+
+            --accent: 348 83% 90%;
+            --accent-foreground: 348 83% 20%;
+
+            --destructive: 0 84.2% 60.2%;
+            --destructive-foreground: 210 40% 98%;
+
+            --border: 214.3 31.8% 91.4%;
+            --input: 0 0% 100%;
+            --ring: 348 83% 47%;
+
+            /* Blood Bank Gradients */
+            --gradient-primary: linear-gradient(135deg, hsl(348 83% 47%), hsl(0 70% 60%));
+            --gradient-hero: linear-gradient(135deg, hsl(348 83% 47%) 0%, hsl(0 70% 60%) 50%, hsl(355 70% 65%) 100%);
+            --gradient-accent: linear-gradient(45deg, hsl(348 83% 90%), hsl(0 70% 92%));
+            --gradient-radial: radial-gradient(circle, var(--from-color), var(--to-color));
+
+            /* Shadows */
+            --shadow-primary: 0 10px 30px -10px hsl(348 83% 47% / 0.3);
+            --shadow-glow: 0 0 40px hsl(348 83% 60% / 0.4);
+
+            --radius: 1rem;
+        }
+
+        /* Utility Classes */
+        .bg-background {
+            background-color: hsl(var(--background));
+        }
+
+        .text-foreground {
+            color: hsl(var(--foreground));
+        }
+
+        .bg-primary {
+            background-color: hsl(var(--primary));
+        }
+
+        .text-primary {
+            color: hsl(var(--primary));
+        }
+
+        .hover\:bg-primary-dark:hover {
+            background-color: hsl(var(--primary-dark));
+        }
+
+        .text-muted-foreground {
+            color: hsl(var(--muted-foreground));
+        }
+
+        .hover\:text-foreground:hover {
+            color: hsl(var(--foreground));
+        }
+
+        .border-border {
+            border-color: hsl(var(--border));
+        }
+
+        .border-primary {
+            border-color: hsl(var(--primary));
+        }
+
+        /* Gradient Classes */
+        .bg-gradient-hero {
+            background-image: var(--gradient-hero);
+        }
+
+        .bg-gradient-primary {
+            background-image: var(--gradient-primary);
+        }
+
+        .bg-gradient-accent {
+            background-image: var(--gradient-accent);
+        }
+
+        .bg-gradient-radial {
+            background-image: var(--gradient-radial);
+        }
+
+        /* Shadow Classes */
+        .shadow-primary {
+            box-shadow: var(--shadow-primary);
+        }
+
+        .shadow-glow {
+            box-shadow: var(--shadow-glow);
+        }
+
+        /* Additional Utilities */
+        .container {
+            width: 100%;
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: 2rem;
+            padding-right: 2rem;
+        }
+
+        @media (min-width: 1400px) {
+            .container {
+                max-width: 1400px;
+            }
+        }
+
+        body {
+            background-color: hsl(var(--background));
+            color: hsl(var(--foreground));
+        }
+    </style>
+</head>
+
+<body class="min-h-screen bg-background text-foreground">
+    <!-- This is a base template with common head configuration -->
+    <!-- Individual pages should use their own structure -->
+</body>
+
+</html>

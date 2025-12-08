@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+<body>
+  <!-- Navigation Fragment -->
+  <nav th:fragment="header" class="relative z-50 bg-transparent">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <!-- Logo -->
+        <div class="flex-shrink-0">
+          <a th:href="@{/}" class="flex items-center space-x-2">
+            <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center">
+              <div class="w-4 h-4 bg-primary rounded-full"></div>
+            </div>
+            <span class="text-white font-bold text-xl">SABAIKO</span>
+            <span class="text-white text-sm">Blood Bank</span>
+          </a>
+        </div>
+
+        <!-- Desktop Navigation -->
+        <div class="hidden md:block">
+          <div class="ml-10 flex items-baseline space-x-8">
+            <a th:href="@{/}" class="text-white hover:text-white/80 px-3 py-2 text-sm font-medium transition-colors duration-200">Home</a>
+            <a th:href="@{/about}" class="text-white hover:text-white/80 px-3 py-2 text-sm font-medium transition-colors duration-200">About</a>
+            <a th:href="@{/donate}" class="text-white hover:text-white/80 px-3 py-2 text-sm font-medium transition-colors duration-200">Donate</a>
+            <a th:href="@{/partners}" class="text-white hover:text-white/80 px-3 py-2 text-sm font-medium transition-colors duration-200">Partners</a>
+            <a th:href="@{/blog}" class="text-white hover:text-white/80 px-3 py-2 text-sm font-medium transition-colors duration-200">Blog</a>
+            <a th:href="@{/faq}" class="text-white hover:text-white/80 px-3 py-2 text-sm font-medium transition-colors duration-200">FAQ</a>
+            <a th:href="@{/contact}" class="text-white hover:text-white/80 px-3 py-2 text-sm font-medium transition-colors duration-200">Contact</a>
+          </div>
+        </div>
+
+        <!-- Mobile menu button -->
+        <div class="md:hidden">
+          <button id="mobile-menu-button" type="button" class="text-white hover:bg-white/10 p-2 rounded-md">
+            <svg id="menu-icon" class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+            </svg>
+            <svg id="close-icon" class="h-6 w-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile Navigation -->
+    <div id="mobile-menu" class="hidden md:hidden">
+      <div class="px-2 pt-2 pb-3 space-y-1 bg-black/20 backdrop-blur-md">
+        <a th:href="@{/}" class="text-white hover:text-white/80 block px-3 py-2 text-base font-medium">Home</a>
+        <a th:href="@{/about}" class="text-white hover:text-white/80 block px-3 py-2 text-base font-medium">About</a>
+        <a th:href="@{/donate}" class="text-white hover:text-white/80 block px-3 py-2 text-base font-medium">Donate</a>
+        <a th:href="@{/partners}" class="text-white hover:text-white/80 block px-3 py-2 text-base font-medium">Partners</a>
+        <a th:href="@{/blog}" class="text-white hover:text-white/80 block px-3 py-2 text-base font-medium">Blog</a>
+        <a th:href="@{/faq}" class="text-white hover:text-white/80 block px-3 py-2 text-base font-medium">FAQ</a>
+        <a th:href="@{/contact}" class="text-white hover:text-white/80 block px-3 py-2 text-base font-medium">Contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <script>
+    // Mobile menu toggle
+    document.addEventListener('DOMContentLoaded', function() {
+      const menuButton = document.getElementById('mobile-menu-button');
+      const mobileMenu = document.getElementById('mobile-menu');
+      const menuIcon = document.getElementById('menu-icon');
+      const closeIcon = document.getElementById('close-icon');
+      
+      if (menuButton) {
+        menuButton.addEventListener('click', function() {
+          mobileMenu.classList.toggle('hidden');
+          menuIcon.classList.toggle('hidden');
+          closeIcon.classList.toggle('hidden');
+        });
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+</head>
+
+<body>
+    <!-- Footer Fragment -->
+    <footer th:fragment="footer" class="bg-black/5 border-t">
+        <div class="container py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="text-sm text-muted-foreground">
+                © <span th:text="${#dates.year(#dates.createNow())}">2024</span> HAMRO Blood Bank
+            </div>
+            <nav class="flex gap-4 text-sm">
+                <a th:href="@{/about}" class="text-muted-foreground hover:text-foreground transition-colors">About</a>
+                <a th:href="@{/donate}" class="text-muted-foreground hover:text-foreground transition-colors">Donate</a>
+                <a th:href="@{/faq}" class="text-muted-foreground hover:text-foreground transition-colors">FAQ</a>
+                <a th:href="@{/contact}"
+                    class="text-muted-foreground hover:text-foreground transition-colors">Contact</a>
+            </nav>
+        </div>
+    </footer>
+</body>
+
+</html>
