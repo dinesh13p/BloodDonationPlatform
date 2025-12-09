@@ -46,6 +46,11 @@ public class ReceiverController {
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
+    @GetMapping("/dashboard")
+    public String showDashboard() {
+        return "receiver/receiver-dashboard";
+    }
+
     @GetMapping("/profile")
     public String showProfile(Model model) {
         User user = getCurrentUser();
@@ -137,13 +142,21 @@ public class ReceiverController {
 
     @PostMapping("/update")
     public String updateProfile(@ModelAttribute ReceiverUpdateDTO updateDTO,
-            @RequestParam(required = false) org.springframework.web.multipart.MultipartFile profileImage) {
+            @RequestParam(required = false) org.springframework.web.multipart.MultipartFile profileImage,
+            @RequestParam(required = false) String province,
+            @RequestParam(required = false) String district,
+            @RequestParam(required = false) String palika,
+            @RequestParam(required = false) String wardNo) {
         User user = getCurrentUser();
 
         // Handle profile image if needed, for now just update details
         // Note: FileUploadService would be needed here if image upload is supported for
         // Receiver
-
+        updateDTO.setProvince(province);
+        updateDTO.setDistrict(district);
+        updateDTO.setPalika(palika);
+        updateDTO.setWardNo(wardNo);
+        updateDTO.setAddress(composeAddress(province, district, palika, wardNo, updateDTO.getAddress()));
         receiverService.updateReceiverDetails(user, updateDTO);
         return "redirect:/receiver/profile";
     }
@@ -174,5 +187,28 @@ public class ReceiverController {
         userService.deleteUser(user.getId());
         SecurityContextHolder.clearContext();
         return "redirect:/auth/login?deleted=true";
+    }
+
+    private String composeAddress(String province, String district, String palika, String wardNo, String fallbackAddress) {
+        StringBuilder builder = new StringBuilder();
+        if (province != null && !province.isBlank()) {
+            builder.append(province.trim());
+        }
+        if (district != null && !district.isBlank()) {
+            if (builder.length() > 0) builder.append(", ");
+            builder.append(district.trim());
+        }
+        if (palika != null && !palika.isBlank()) {
+            if (builder.length() > 0) builder.append(", ");
+            builder.append(palika.trim());
+        }
+        if (wardNo != null && !wardNo.isBlank()) {
+            if (builder.length() > 0) builder.append(" - ");
+            builder.append("Ward ").append(wardNo.trim());
+        }
+        if (builder.length() == 0 && fallbackAddress != null && !fallbackAddress.isBlank()) {
+            builder.append(fallbackAddress.trim());
+        }
+        return builder.length() == 0 ? "Not Provided" : builder.toString();
     }
 }

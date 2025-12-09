@@ -34,8 +34,10 @@
                     <span class="text-white text-sm">Blood Bank</span>
                 </div>
                 <div class="flex items-center space-x-6">
+                    <a th:href="@{/receiver/dashboard}"
+                        class="text-white hover:text-white/80 px-3 py-2 text-sm font-medium">Dashboard</a>
                     <a th:href="@{/receiver/profile}"
-                        class="text-white hover:text-white/80 px-3 py-2 text-sm font-medium">My Profile</a>
+                        class="text-white hover:text-white/80 px-3 py-2 text-sm font-medium">Profile</a>
                     <a th:href="@{/receiver/search}"
                         class="text-white hover:text-white/80 px-3 py-2 text-sm font-medium">Search Donors</a>
                     <form th:action="@{/logout}" method="post" class="inline">

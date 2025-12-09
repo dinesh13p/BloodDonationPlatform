@@ -134,7 +134,7 @@
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                         </svg>
-                                        <input type="text" name="q" placeholder="Search blood type (A+, B+, O+, AB+...)"
+                                        <input type="text" name="bloodGroup" placeholder="Blood type (A+, B+, O+, AB+...)"
                                             class="pl-10 w-full h-12 text-base border-none rounded-md focus:ring-2 focus:ring-primary" />
                                     </div>
                                 </div>
@@ -149,7 +149,7 @@
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                                         </svg>
-                                        <input type="text" name="location" placeholder="Enter your location"
+                                        <input type="text" name="province" placeholder="Province / District / Municipality"
                                             class="pl-10 w-full h-12 text-base border-none rounded-md focus:ring-2 focus:ring-primary" />
                                     </div>
                                 </div>
@@ -164,21 +164,21 @@
                             <!-- Quick Blood Type Buttons -->
                             <div class="mt-4 flex flex-wrap gap-2">
                                 <span class="text-sm text-muted-foreground">Quick search:</span>
-                                <a th:href="@{/search(q='A+')}"
+                                <a th:href="@{/search(bloodGroup='A+')}"
                                     class="text-primary border border-primary hover:bg-primary hover:text-white px-3 py-1 rounded text-sm">A+</a>
-                                <a th:href="@{/search(q='A-')}"
+                                <a th:href="@{/search(bloodGroup='A-')}"
                                     class="text-primary border border-primary hover:bg-primary hover:text-white px-3 py-1 rounded text-sm">A-</a>
-                                <a th:href="@{/search(q='B+')}"
+                                <a th:href="@{/search(bloodGroup='B+')}"
                                     class="text-primary border border-primary hover:bg-primary hover:text-white px-3 py-1 rounded text-sm">B+</a>
-                                <a th:href="@{/search(q='B-')}"
+                                <a th:href="@{/search(bloodGroup='B-')}"
                                     class="text-primary border border-primary hover:bg-primary hover:text-white px-3 py-1 rounded text-sm">B-</a>
-                                <a th:href="@{/search(q='AB+')}"
+                                <a th:href="@{/search(bloodGroup='AB+')}"
                                     class="text-primary border border-primary hover:bg-primary hover:text-white px-3 py-1 rounded text-sm">AB+</a>
-                                <a th:href="@{/search(q='AB-')}"
+                                <a th:href="@{/search(bloodGroup='AB-')}"
                                     class="text-primary border border-primary hover:bg-primary hover:text-white px-3 py-1 rounded text-sm">AB-</a>
-                                <a th:href="@{/search(q='O+')}"
+                                <a th:href="@{/search(bloodGroup='O+')}"
                                     class="text-primary border border-primary hover:bg-primary hover:text-white px-3 py-1 rounded text-sm">O+</a>
-                                <a th:href="@{/search(q='O-')}"
+                                <a th:href="@{/search(bloodGroup='O-')}"
                                     class="text-primary border border-primary hover:bg-primary hover:text-white px-3 py-1 rounded text-sm">O-</a>
                             </div>
                         </div>
@@ -219,7 +219,7 @@
                     <!-- First Phone -->
                     <div class="relative z-20 transform -rotate-12 hover:rotate-0 transition-transform duration-300">
                         <div class="bg-black rounded-[2.5rem] p-2 shadow-2xl">
-                            <img th:src="@{/images/phone-mockup-1.png}" alt="Blood Search App Screenshot 1"
+                            <img th:src="@{/phone-mockup-1.png}" alt="Blood Search App Screenshot 1"
                                 class="w-64 h-auto rounded-[2rem]" />
                         </div>
                     </div>
@@ -228,7 +228,7 @@
                     <div
                         class="absolute top-16 left-32 z-10 transform rotate-12 hover:rotate-0 transition-transform duration-300">
                         <div class="bg-black rounded-[2.5rem] p-2 shadow-2xl">
-                            <img th:src="@{/images/phone-mockup-2.png}" alt="Blood Search App Screenshot 2"
+                            <img th:src="@{/phone-mockup-2.png}" alt="Blood Search App Screenshot 2"
                                 class="w-64 h-auto rounded-[2rem]" />
                         </div>
                     </div>

@@ -14,7 +14,12 @@
                 <i class="bi bi-heart-pulse"></i> Sabaiko Blood Bank
             </a>
             <div class="navbar-nav ms-auto">
-                <a class="nav-link" th:href="@{/receiver/profile}">Back to Profile</a>
+                <a class="nav-link" th:href="@{/receiver/dashboard}">Dashboard</a>
+                <a class="nav-link" th:href="@{/receiver/profile}">Profile</a>
+                <a class="nav-link" th:href="@{/receiver/search}">Search Donors</a>
+                <form th:action="@{/logout}" method="post" class="d-inline">
+                    <button type="submit" class="btn btn-link nav-link text-white">Logout</button>
+                </form>
             </div>
         </div>
     </nav>
@@ -38,14 +43,6 @@
                                 <div class="col-md-6">
                                     <label class="form-label">Email</label>
                                     <input type="email" class="form-control" th:value="${user.email}" disabled>
-                                </div>
-                            </div>
-                            
-                            <div class="row mb-3">
-                                <div class="col-md-12">
-                                    <label for="address" class="form-label">Address</label>
-                                    <input type="text" class="form-control" id="address" name="address" 
-                                           th:value="${receiverDetails?.address}" th:field="*{address}">
                                 </div>
                             </div>
                             
@@ -82,6 +79,18 @@
                                            th:value="${receiverDetails?.wardNo}" th:field="*{wardNo}">
                                 </div>
                             </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <input type="hidden" class="form-control" id="address" name="address"
+                                           th:value="${receiverDetails?.address}" th:field="*{address}">
+                                    <div class="p-3 border border-2 border-dashed rounded">
+                                        <div class="fw-semibold small">Full Address</div>
+                                        <div id="addressPreview" class="text-muted" th:text="${receiverDetails?.address}">Not Provided</div>
+                                        <div class="text-muted small">Combined from Province, District, Municipality, Ward.</div>
+                                    </div>
+                                </div>
+                            </div>
                             
                             <div class="mb-3">
                                 <label for="bio" class="form-label">Bio (Optional)</label>
@@ -102,12 +111,38 @@
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script th:inline="javascript">
-        // Pre-select province if exists
-        /*[[${receiverDetails?.province}]]*/ 
-        var savedProvince = /*[[${receiverDetails?.province}]]*/ '';
-        if(savedProvince) {
-            document.getElementById('province').value = savedProvince;
+        const addressPreview = document.getElementById('addressPreview');
+        const hiddenAddress = document.getElementById('address');
+        const addressInputs = ['province','district','palika','wardNo'];
+
+        function updateAddressPreview() {
+            const province = document.getElementById('province').value.trim();
+            const district = document.getElementById('district').value.trim();
+            const palika = document.getElementById('palika').value.trim();
+            const ward = document.getElementById('wardNo').value.trim();
+
+            const parts = [];
+            if (province) parts.push(province);
+            if (district) parts.push(district);
+            if (palika) parts.push(palika);
+
+            let display = parts.join(', ');
+            if (ward) {
+                display = display ? `${display} - Ward ${ward}` : `Ward ${ward}`;
+            }
+
+            const finalValue = display || 'Not Provided';
+            addressPreview.textContent = finalValue;
+            hiddenAddress.value = finalValue;
         }
+
+        addressInputs.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.addEventListener('input', updateAddressPreview);
+            }
+        });
+        updateAddressPreview();
     </script>
 </body>
 </html>

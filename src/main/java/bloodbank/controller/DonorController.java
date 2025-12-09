@@ -1,7 +1,6 @@
 package bloodbank.controller;
 
 import bloodbank.dto.DonorUpdateDTO;
-import bloodbank.entity.BloodGroup;
 import bloodbank.entity.DonorDetails;
 import bloodbank.entity.User;
 import bloodbank.service.DonorService;
@@ -41,6 +40,11 @@ public class DonorController {
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
+    @GetMapping("/dashboard")
+    public String showDashboard() {
+        return "donor/donor-dashboard";
+    }
+
     @GetMapping("/profile")
     public String showProfile(Model model) {
         User user = getCurrentUser();
@@ -59,7 +63,6 @@ public class DonorController {
         model.addAttribute("user", user);
         model.addAttribute("donorDetails", donorDetails.orElse(null));
         model.addAttribute("updateDTO", new DonorUpdateDTO());
-        model.addAttribute("bloodGroups", BloodGroup.values());
         return "donor/edit-donor";
     }
 
@@ -72,7 +75,6 @@ public class DonorController {
             @RequestParam(required = false) Boolean availability,
             @RequestParam(required = false) String medicalHistory,
             @RequestParam(required = false) String dateOfBirth,
-            @RequestParam(required = false) String bloodGroup,
             @RequestParam(required = false) MultipartFile profileImage,
             @RequestParam(required = false) String bio) {
         User user = getCurrentUser();
@@ -87,7 +89,7 @@ public class DonorController {
         }
 
         DonorUpdateDTO updateDTO = new DonorUpdateDTO();
-        updateDTO.setAddress(address);
+        updateDTO.setAddress(composeAddress(province, district, palika, wardNo, address));
         updateDTO.setProvince(province);
         updateDTO.setDistrict(district);
         updateDTO.setPalika(palika);
@@ -97,17 +99,33 @@ public class DonorController {
         if (dateOfBirth != null && !dateOfBirth.isEmpty()) {
             updateDTO.setDateOfBirth(java.time.LocalDate.parse(dateOfBirth));
         }
-        if (bloodGroup != null && !bloodGroup.isEmpty()) {
-            try {
-                updateDTO.setBloodGroup(BloodGroup.valueOf(bloodGroup));
-            } catch (IllegalArgumentException ignored) {
-                // ignore invalid blood group input to keep existing value
-            }
-        }
         updateDTO.setBio(bio);
 
         donorService.updateDonorDetails(user, updateDTO);
         return "redirect:/donor/profile";
+    }
+
+    private String composeAddress(String province, String district, String palika, String wardNo, String fallbackAddress) {
+        StringBuilder builder = new StringBuilder();
+        if (province != null && !province.isBlank()) {
+            builder.append(province.trim());
+        }
+        if (district != null && !district.isBlank()) {
+            if (builder.length() > 0) builder.append(", ");
+            builder.append(district.trim());
+        }
+        if (palika != null && !palika.isBlank()) {
+            if (builder.length() > 0) builder.append(", ");
+            builder.append(palika.trim());
+        }
+        if (wardNo != null && !wardNo.isBlank()) {
+            if (builder.length() > 0) builder.append(" - ");
+            builder.append("Ward ").append(wardNo.trim());
+        }
+        if (builder.length() == 0 && fallbackAddress != null && !fallbackAddress.isBlank()) {
+            builder.append(fallbackAddress.trim());
+        }
+        return builder.length() == 0 ? "Not Provided" : builder.toString();
     }
 
     @GetMapping("/search")

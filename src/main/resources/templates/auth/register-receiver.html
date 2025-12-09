@@ -37,7 +37,7 @@
     </style>
 </head>
 
-<body class="min-h-screen bg-gradient-hero overflow-hidden relative">
+<body class="min-h-screen bg-gradient-hero overflow-auto relative">
     <div class="absolute inset-0 overflow-hidden">
         <div class="absolute -top-10 -left-10 w-40 h-40 bg-white/10 rounded-full blur-xl"></div>
         <div class="absolute top-20 right-20 w-32 h-32 bg-white/10 rounded-full blur-lg"></div>
@@ -65,7 +65,7 @@
             <div th:if="${error}" class="bg-red-50 border border-red-200 text-red-700 rounded-md p-4 mb-4"
                 th:text="${error}"></div>
 
-            <form th:action="@{/auth/register/receiver}" th:object="${registrationDTO}" method="post" class="space-y-4">
+            <form th:action="@{/auth/register/receiver}" th:object="${registrationDTO}" method="post" class="space-y-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label for="username" class="block text-sm font-medium mb-1">Username *</label>
@@ -116,12 +116,47 @@
                     </div>
                 </div>
 
-                <div>
-                    <label for="address" class="block text-sm font-medium mb-1">Address *</label>
-                    <input type="text" id="address" th:field="*{address}" required
-                        class="w-full h-12 px-3 border border-border rounded-md focus:ring-2 focus:ring-primary" />
-                    <div th:if="${#fields.hasErrors('address')}" th:errors="*{address}"
-                        class="text-red-600 text-sm mt-1"></div>
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between">
+                        <label class="block text-sm font-medium">Address Details *</label>
+                        <span class="text-xs text-gray-500">Province + District + Municipality + Ward</span>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="province" class="block text-sm font-medium mb-1">Province</label>
+                            <input type="text" id="province" th:field="*{province}"
+                                class="w-full h-12 px-3 border border-border rounded-md focus:ring-2 focus:ring-primary" />
+                        </div>
+                        <div>
+                            <label for="district" class="block text-sm font-medium mb-1">District</label>
+                            <input type="text" id="district" th:field="*{district}"
+                                class="w-full h-12 px-3 border border-border rounded-md focus:ring-2 focus:ring-primary" />
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="palika" class="block text-sm font-medium mb-1">Municipality</label>
+                            <input type="text" id="palika" th:field="*{palika}"
+                                class="w-full h-12 px-3 border border-border rounded-md focus:ring-2 focus:ring-primary" />
+                        </div>
+                        <div>
+                            <label for="wardNo" class="block text-sm font-medium mb-1">Ward No.</label>
+                            <input type="text" id="wardNo" th:field="*{wardNo}"
+                                class="w-full h-12 px-3 border border-border rounded-md focus:ring-2 focus:ring-primary" />
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-50 border border-dashed border-border rounded-lg p-3">
+                        <input type="hidden" id="address" th:field="*{address}" required>
+                        <p class="text-sm text-gray-700">
+                            Full Address:
+                            <span id="addressPreview" class="font-semibold" th:text="*{address}">Not Provided</span>
+                        </p>
+                        <p class="text-xs text-gray-500">Address will be saved as a combination of the fields above.</p>
+                        <div th:if="${#fields.hasErrors('address')}" th:errors="*{address}"
+                             class="text-red-600 text-sm mt-1"></div>
+                    </div>
                 </div>
 
                 <button type="submit"
@@ -134,6 +169,40 @@
             </div>
         </div>
     </div>
+    <script>
+        const addressFields = ['province','district','palika','wardNo'];
+        const preview = document.getElementById('addressPreview');
+        const hiddenAddress = document.getElementById('address');
+
+        function updateAddress() {
+            const province = document.getElementById('province').value.trim();
+            const district = document.getElementById('district').value.trim();
+            const palika = document.getElementById('palika').value.trim();
+            const ward = document.getElementById('wardNo').value.trim();
+            const parts = [];
+
+            if (province) parts.push(province);
+            if (district) parts.push(district);
+            if (palika) parts.push(palika);
+
+            let display = parts.join(', ');
+            if (ward) {
+                display = display ? `${display} - Ward ${ward}` : `Ward ${ward}`;
+            }
+
+            const finalValue = display || 'Not Provided';
+            preview.textContent = finalValue;
+            hiddenAddress.value = finalValue;
+        }
+
+        addressFields.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.addEventListener('input', updateAddress);
+            }
+        });
+        updateAddress();
+    </script>
 </body>
 
 </html>

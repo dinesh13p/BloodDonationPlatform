@@ -72,12 +72,56 @@
                     <a th:href="@{/auth/login}" class="inline-flex items-center bg-black hover:bg-black/80 text-white px-6 py-3 rounded-md font-semibold shadow-lg">
                         Go to Dashboard
                     </a>
+                    <a th:href="@{/auth/register/donor}" class="inline-flex items-center bg-white/15 hover:bg-white/25 text-white px-6 py-3 rounded-md font-semibold border border-white/30">
+                        Become a Donor
+                    </a>
                 </div>
             </div>
-            
+            <div class="relative">
+                <div class="absolute -inset-6 bg-white/15 blur-3xl rounded-full -z-10"></div>
+                <div class="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-6 shadow-xl space-y-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-white/70 text-sm">Verified users</p>
+                            <div class="text-3xl font-bold">15,000+</div>
+                        </div>
+                        <div class="bg-black/30 rounded-full px-4 py-2 text-sm font-semibold">Growing daily</div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-white/10 rounded-xl p-4 border border-white/10">
+                            <div class="text-sm text-white/70">Avg. match time</div>
+                            <div class="text-2xl font-semibold">~18 min</div>
+                        </div>
+                        <div class="bg-white/10 rounded-xl p-4 border border-white/10">
+                            <div class="text-sm text-white/70">District coverage</div>
+                            <div class="text-2xl font-semibold">70/77</div>
+                        </div>
+                    </div>
+                    <p class="text-white/80 text-sm leading-relaxed">
+                        Real-time availability, verified identities, and guided follow-ups mean less waiting and more successful donations.
+                    </p>
+                </div>
+            </div>
+        </div>
     </section>
 
-    <section class="container py-10"></section>
+    <!-- Stats Section -->
+    <section class="container py-12">
+        <div class="grid gap-4 sm:grid-cols-3">
+            <div class="bg-white rounded-lg border border-gray-200 p-6 text-center shadow">
+                <div class="text-3xl font-bold">10k+</div>
+                <div class="text-muted-foreground">Ready Donors</div>
+            </div>
+            <div class="bg-white rounded-lg border border-gray-200 p-6 text-center shadow">
+                <div class="text-3xl font-bold">1.5k</div>
+                <div class="text-muted-foreground">Verified Matches</div>
+            </div>
+            <div class="bg-white rounded-lg border border-gray-200 p-6 text-center shadow">
+                <div class="text-3xl font-bold">24/7</div>
+                <div class="text-muted-foreground">Support Availability</div>
+            </div>
+        </div>
+    </section>
 
     <!-- Mission / Vision Section -->
     <section class="container pb-16 grid gap-6 md:grid-cols-3">
@@ -91,7 +135,7 @@
                     Mission
                 </h3>
                 <p class="text-muted-foreground">
-                    Get blood where it is needed the fastest by contacting closest donors.
+                    Get blood where it is needed the fastest by pairing verified donors with the closest receivers.
                 </p>
             </div>
         </div>

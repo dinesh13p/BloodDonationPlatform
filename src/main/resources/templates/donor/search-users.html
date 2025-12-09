@@ -16,7 +16,11 @@
                 <i class="bi bi-heart-pulse"></i> Sabaiko Blood Bank
             </a>
             <div class="navbar-nav ms-auto">
+                <a class="nav-link" th:href="@{/donor/dashboard}">Dashboard</a>
                 <a class="nav-link" th:href="@{/donor/profile}">My Profile</a>
+                <a class="nav-link" th:href="@{/about}">About</a>
+                <a class="nav-link" th:href="@{/blog}">Blog</a>
+                <a class="nav-link" th:href="@{/faq}">FAQ</a>
                 <a class="nav-link active" th:href="@{/donor/search}">Search Users</a>
                 <form th:action="@{/logout}" method="post" class="d-inline">
                     <button type="submit" class="btn btn-link nav-link text-white">Logout</button>

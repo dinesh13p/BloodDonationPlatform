@@ -38,14 +38,37 @@
                     <span class="text-white font-bold text-xl">SABAIKO</span>
                     <span class="text-white text-sm">Blood Bank</span>
                 </div>
-                <div class="flex items-center space-x-6">
+                <div class="hidden md:flex items-center space-x-6">
+                    <a th:href="@{/donor/dashboard}"
+                        class="text-white hover:text-white/80 px-3 py-2 text-sm font-medium">Dashboard</a>
                     <a th:href="@{/donor/profile}"
                         class="text-white hover:text-white/80 px-3 py-2 text-sm font-medium">My Profile</a>
+                    <a th:href="@{/about}" class="text-white hover:text-white/80 px-3 py-2 text-sm font-medium">About</a>
+                    <a th:href="@{/blog}" class="text-white hover:text-white/80 px-3 py-2 text-sm font-medium">Blog</a>
+                    <a th:href="@{/faq}" class="text-white hover:text-white/80 px-3 py-2 text-sm font-medium">FAQ</a>
                     <form th:action="@{/logout}" method="post" class="inline">
                         <button type="submit"
                             class="text-white hover:text-white/80 px-3 py-2 text-sm font-medium">Logout</button>
                     </form>
                 </div>
+                <button id="donor-edit-menu-button" class="md:hidden text-white p-2 rounded hover:bg-white/10" type="button">
+                    <svg id="donor-edit-menu-icon" class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                    <svg id="donor-edit-close-icon" class="h-6 w-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div id="donor-edit-mobile-menu" class="md:hidden hidden pb-3 space-y-2">
+                <a th:href="@{/donor/dashboard}" class="block text-white px-3 py-2 text-sm font-medium hover:bg-white/10 rounded">Dashboard</a>
+                <a th:href="@{/donor/profile}" class="block text-white px-3 py-2 text-sm font-medium hover:bg-white/10 rounded">My Profile</a>
+                <a th:href="@{/about}" class="block text-white px-3 py-2 text-sm font-medium hover:bg-white/10 rounded">About</a>
+                <a th:href="@{/blog}" class="block text-white px-3 py-2 text-sm font-medium hover:bg-white/10 rounded">Blog</a>
+                <a th:href="@{/faq}" class="block text-white px-3 py-2 text-sm font-medium hover:bg-white/10 rounded">FAQ</a>
+                <form th:action="@{/logout}" method="post" class="inline-block w-full">
+                    <button type="submit" class="w-full text-left text-white px-3 py-2 text-sm font-medium hover:bg-white/10 rounded">Logout</button>
+                </form>
             </div>
         </div>
     </nav>
@@ -64,13 +87,12 @@
                     </div>
 
                     <div>
-                        <label for="bloodGroup" class="block text-sm font-medium mb-1">Blood Group</label>
-                        <select id="bloodGroup" name="bloodGroup"
-                            class="w-full h-12 px-3 border border-border rounded-md">
-                            <option value="">Select Blood Group</option>
-                            <option th:each="bg : ${bloodGroups}" th:value="${bg.name()}" th:text="${bg.displayName}"
-                                th:selected="${donorDetails != null and donorDetails.bloodGroup == bg}"></option>
-                        </select>
+                        <label class="block text-sm font-medium mb-1">Blood Group</label>
+                        <div class="w-full h-12 px-3 flex items-center border border-border rounded-md bg-gray-50">
+                            <span class="text-primary font-semibold"
+                                th:text="${donorDetails != null ? donorDetails.bloodGroup.displayName : 'Not set'}"></span>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1">Contact admin if your blood type needs to be corrected.</p>
                     </div>
 
                     <div>
@@ -80,40 +102,48 @@
                             class="w-full h-12 px-3 border border-border rounded-md" />
                     </div>
 
-                    <div>
-                        <label for="address" class="block text-sm font-medium mb-1">Address</label>
-                        <input type="text" id="address" name="address"
-                            th:value="${donorDetails != null ? donorDetails.address : ''}"
-                            class="w-full h-12 px-3 border border-border rounded-md" />
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label for="province" class="block text-sm font-medium mb-1">Province</label>
-                            <input type="text" id="province" name="province"
-                                th:value="${donorDetails != null ? donorDetails.province : ''}"
-                                class="w-full h-12 px-3 border border-border rounded-md" />
+                    <div class="space-y-3">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="province" class="block text-sm font-medium mb-1">Province</label>
+                                <input type="text" id="province" name="province"
+                                    th:value="${donorDetails != null ? donorDetails.province : ''}"
+                                    class="w-full h-12 px-3 border border-border rounded-md" />
+                            </div>
+                            <div>
+                                <label for="district" class="block text-sm font-medium mb-1">District</label>
+                                <input type="text" id="district" name="district"
+                                    th:value="${donorDetails != null ? donorDetails.district : ''}"
+                                    class="w-full h-12 px-3 border border-border rounded-md" />
+                            </div>
                         </div>
-                        <div>
-                            <label for="district" class="block text-sm font-medium mb-1">District</label>
-                            <input type="text" id="district" name="district"
-                                th:value="${donorDetails != null ? donorDetails.district : ''}"
-                                class="w-full h-12 px-3 border border-border rounded-md" />
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="palika" class="block text-sm font-medium mb-1">Palika (Municipality)</label>
+                                <input type="text" id="palika" name="palika"
+                                    th:value="${donorDetails != null ? donorDetails.palika : ''}"
+                                    class="w-full h-12 px-3 border border-border rounded-md" />
+                            </div>
+
+                            <div>
+                                <label for="wardNo" class="block text-sm font-medium mb-1">Ward No.</label>
+                                <input type="text" id="wardNo" name="wardNo"
+                                    th:value="${donorDetails != null ? donorDetails.wardNo : ''}"
+                                    class="w-full h-12 px-3 border border-border rounded-md" />
+                            </div>
                         </div>
-                    </div>
 
-                    <div>
-                        <label for="palika" class="block text-sm font-medium mb-1">Palika (Municipality)</label>
-                        <input type="text" id="palika" name="palika"
-                            th:value="${donorDetails != null ? donorDetails.palika : ''}"
-                            class="w-full h-12 px-3 border border-border rounded-md" />
-                    </div>
-
-                    <div>
-                        <label for="wardNo" class="block text-sm font-medium mb-1">Ward No.</label>
-                        <input type="text" id="wardNo" name="wardNo"
-                            th:value="${donorDetails != null ? donorDetails.wardNo : ''}"
-                            class="w-full h-12 px-3 border border-border rounded-md" />
+                        <div class="bg-gray-50 border border-dashed border-border rounded-lg p-3">
+                            <input type="hidden" id="address" name="address"
+                                   th:value="${donorDetails != null ? donorDetails.address : ''}">
+                            <p class="text-sm text-gray-700">
+                                Full Address:
+                                <span id="addressPreview" class="font-semibold"
+                                      th:text="${donorDetails != null ? donorDetails.address : 'Not Provided'}">Not Provided</span>
+                            </p>
+                            <p class="text-xs text-gray-500">Address is stored as Province, District, Municipality, Ward.</p>
+                        </div>
                     </div>
 
                     <div class="flex items-center">
@@ -148,6 +178,53 @@
             </div>
         </div>
     </div>
+    <script>
+        const donorAddressFields = ['province','district','palika','wardNo'];
+        const donorPreview = document.getElementById('addressPreview');
+        const donorHiddenAddress = document.getElementById('address');
+
+        function updateDonorAddress() {
+            const province = document.getElementById('province').value.trim();
+            const district = document.getElementById('district').value.trim();
+            const palika = document.getElementById('palika').value.trim();
+            const ward = document.getElementById('wardNo').value.trim();
+            const parts = [];
+
+            if (province) parts.push(province);
+            if (district) parts.push(district);
+            if (palika) parts.push(palika);
+
+            let display = parts.join(', ');
+            if (ward) {
+                display = display ? `${display} - Ward ${ward}` : `Ward ${ward}`;
+            }
+
+            const finalValue = display || 'Not Provided';
+            donorPreview.textContent = finalValue;
+            donorHiddenAddress.value = finalValue;
+        }
+
+        donorAddressFields.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.addEventListener('input', updateDonorAddress);
+            }
+        });
+        updateDonorAddress();
+    </script>
+    <script>
+        const deBtn = document.getElementById('donor-edit-menu-button');
+        const deMenu = document.getElementById('donor-edit-mobile-menu');
+        const deMenuIcon = document.getElementById('donor-edit-menu-icon');
+        const deCloseIcon = document.getElementById('donor-edit-close-icon');
+        if (deBtn && deMenu && deMenuIcon && deCloseIcon) {
+            deBtn.addEventListener('click', () => {
+                deMenu.classList.toggle('hidden');
+                deMenuIcon.classList.toggle('hidden');
+                deCloseIcon.classList.toggle('hidden');
+            });
+        }
+    </script>
 </body>
 
 </html>

@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - Sabaiko Blood Bank</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Blood Bank Design System */
+        :root {
+            --background: 0 0% 100%;
+            --foreground: 222.2 84% 4.9%;
+            --primary: 348 83% 47%;
+            --primary-foreground: 0 0% 100%;
+            --primary-light: 348 83% 57%;
+            --primary-dark: 348 83% 37%;
+            --muted-foreground: 215.4 16.3% 46.9%;
+            --border: 214.3 31.8% 91.4%;
+            --gradient-hero: linear-gradient(135deg, hsl(348 83% 47%) 0%, hsl(0 70% 60%) 50%, hsl(355 70% 65%) 100%);
+            --gradient-primary: linear-gradient(135deg, hsl(348 83% 47%), hsl(0 70% 60%));
+            --shadow-glow: 0 0 40px hsl(348 83% 60% / 0.4);
+            --shadow-primary: 0 10px 30px -10px hsl(348 83% 47% / 0.3);
+        }
+
+        .bg-gradient-hero {
+            background-image: var(--gradient-hero);
+        }
+
+        .bg-gradient-primary {
+            background-image: var(--gradient-primary);
+        }
+
+        .shadow-glow {
+            box-shadow: var(--shadow-glow);
+        }
+
+        .shadow-primary {
+            box-shadow: var(--shadow-primary);
+        }
+
+        .text-muted-foreground {
+            color: hsl(var(--muted-foreground));
+        }
+
+        .border-border {
+            border-color: hsl(var(--border));
+        }
+
+        .bg-primary {
+            background-color: hsl(var(--primary));
+        }
+
+        .text-primary {
+            color: hsl(var(--primary));
+        }
+
+        .hover\:bg-primary:hover {
+            background-color: hsl(var(--primary));
+        }
+
+        .hover\:bg-primary-dark:hover {
+            background-color: hsl(var(--primary-dark));
+        }
+
+        .hover\:text-foreground:hover {
+            color: hsl(var(--foreground));
+        }
+
+        .border-primary {
+            border-color: hsl(var(--primary));
+        }
+
+        .hover\:text-white:hover {
+            color: white;
+        }
+
+        .container {
+            width: 100%;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        @media (min-width: 1400px) {
+            .container {
+                max-width: 1400px;
+            }
+        }
+    </style>
+</head>
+
+<body class="min-h-screen bg-gradient-hero overflow-hidden relative">
+    <!-- Background Decorative Elements -->
+    <div class="absolute inset-0 overflow-hidden">
+        <div class="absolute -top-10 -left-10 w-40 h-40 bg-white/10 rounded-full blur-xl"></div>
+        <div class="absolute top-20 right-20 w-32 h-32 bg-white/10 rounded-full blur-lg"></div>
+        <div class="absolute bottom-40 left-20 w-24 h-24 bg-white/10 rounded-full blur-md"></div>
+        <div class="absolute top-1/2 left-1/4 w-16 h-16 bg-white/10 rounded-full blur-sm"></div>
+        <div class="absolute bottom-20 right-1/3 w-20 h-20 bg-white/10 rounded-full blur-md"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="relative z-50 bg-transparent">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center">
+                        <div class="w-4 h-4 bg-primary rounded-full"></div>
+                    </div>
+                    <span class="text-white font-bold text-xl">SABAIKO</span>
+                    <span class="text-white text-sm">Blood Bank</span>
+                </div>
+                <div class="hidden md:flex items-center space-x-6">
+                    <a th:href="@{/donor/dashboard}"
+                        class="text-white hover:text-white/80 px-3 py-2 text-sm font-medium">Dashboard</a>
+                    <a th:href="@{/donor/profile}"
+                        class="text-white hover:text-white/80 px-3 py-2 text-sm font-medium">My Profile</a>
+                    <a th:href="@{/about}" class="text-white hover:text-white/80 px-3 py-2 text-sm font-medium">About</a>
+                    <a th:href="@{/blog}" class="text-white hover:text-white/80 px-3 py-2 text-sm font-medium">Blog</a>
+                    <a th:href="@{/faq}" class="text-white hover:text-white/80 px-3 py-2 text-sm font-medium">FAQ</a>
+                    <form th:action="@{/logout}" method="post" class="inline">
+                        <button type="submit"
+                            class="text-white hover:text-white/80 px-3 py-2 text-sm font-medium">Logout</button>
+                    </form>
+                </div>
+                <button id="donor-menu-button" class="md:hidden text-white p-2 rounded hover:bg-white/10" type="button">
+                    <svg id="donor-menu-icon" class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                    <svg id="donor-close-icon" class="h-6 w-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div id="donor-mobile-menu" class="md:hidden hidden pb-3 space-y-2">
+                <a th:href="@{/donor/dashboard}" class="block text-white px-3 py-2 text-sm font-medium hover:bg-white/10 rounded">Dashboard</a>
+                <a th:href="@{/donor/profile}" class="block text-white px-3 py-2 text-sm font-medium hover:bg-white/10 rounded">My Profile</a>
+                <a th:href="@{/about}" class="block text-white px-3 py-2 text-sm font-medium hover:bg-white/10 rounded">About</a>
+                <a th:href="@{/blog}" class="block text-white px-3 py-2 text-sm font-medium hover:bg-white/10 rounded">Blog</a>
+                <a th:href="@{/faq}" class="block text-white px-3 py-2 text-sm font-medium hover:bg-white/10 rounded">FAQ</a>
+                <form th:action="@{/logout}" method="post" class="inline-block w-full">
+                    <button type="submit" class="w-full text-left text-white px-3 py-2 text-sm font-medium hover:bg-white/10 rounded">Logout</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+        <div class="grid lg:grid-cols-2 gap-12 items-center min-h-[calc(100vh-100px)]">
+            <!-- Left Content -->
+            <div class="space-y-8">
+                <div class="space-y-6">
+                    <h1 class="text-5xl lg:text-7xl font-bold text-white leading-tight">
+                        HELPING
+                        <br />
+                        <span class="text-white/90">Blood Search</span>
+                    </h1>
+
+                    <p class="text-lg lg:text-xl text-white/90 leading-relaxed max-w-2xl">
+                        Blood deficiency is a life-threatening condition that forces people to
+                        undergo trauma to find matching blood in a timely manner. We aim
+                        to eliminate blood deficiency in Nepal.
+                    </p>
+                </div>
+
+                
+
+            </div>
+
+            <!-- Right Content - Phone Mockups -->
+            <div class="relative flex justify-center items-center">
+                <div class="relative">
+                    <!-- First Phone -->
+                    <div class="relative z-20 transform -rotate-12 hover:rotate-0 transition-transform duration-300">
+                        <div class="bg-black rounded-[2.5rem] p-2 shadow-2xl">
+                            <img th:src="@{/phone-mockup-1.png}" alt="Blood Search App Screenshot 1"
+                                class="w-64 h-auto rounded-[2rem]" />
+                        </div>
+                    </div>
+
+                    <!-- Second Phone -->
+                    <div
+                        class="absolute top-16 left-32 z-10 transform rotate-12 hover:rotate-0 transition-transform duration-300">
+                        <div class="bg-black rounded-[2.5rem] p-2 shadow-2xl">
+                            <img th:src="@{/phone-mockup-2.png}" alt="Blood Search App Screenshot 2"
+                                class="w-64 h-auto rounded-[2rem]" />
+                        </div>
+                    </div>
+
+                    <!-- Decorative Glow Effects -->
+                    <div class="absolute -inset-10 bg-white/20 rounded-full blur-3xl -z-10"
+                        style="background: radial-gradient(circle, rgba(255,255,255,0.2), transparent);"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Wave Effect -->
+    <div class="absolute bottom-0 left-0 right-0">
+        <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-24">
+            <path
+                d="M0,64L48,69.3C96,75,192,85,288,80C384,75,480,53,576,48C672,43,768,53,864,64C960,75,1056,85,1152,80C1248,75,1344,53,1392,42.7L1440,32L1440,120L1392,120C1344,120,1248,120,1152,120C1056,120,960,120,864,120C768,120,672,120,576,120C480,120,384,120,288,120C192,120,96,120,48,120L0,120Z"
+                fill="white" fill-opacity="0.1" />
+        </svg>
+    </div>
+
+    <!-- Footer -->
+    <div th:replace="~{layout/footer :: footer}"></div>
+    <script>
+        const donorBtn = document.getElementById('donor-menu-button');
+        const donorMenu = document.getElementById('donor-mobile-menu');
+        const donorMenuIcon = document.getElementById('donor-menu-icon');
+        const donorCloseIcon = document.getElementById('donor-close-icon');
+        if (donorBtn && donorMenu && donorMenuIcon && donorCloseIcon) {
+            donorBtn.addEventListener('click', () => {
+                donorMenu.classList.toggle('hidden');
+                donorMenuIcon.classList.toggle('hidden');
+                donorCloseIcon.classList.toggle('hidden');
+            });
+        }
+    </script>
+</body>
+
+</html>

@@ -38,6 +38,10 @@ public class AdminService {
         return userService.findByRoleAndStatus(UserRole.RECEIVER, UserStatus.PENDING);
     }
     
+    public List<User> getRestrictedUsers() {
+        return userService.findByStatus(UserStatus.RESTRICTED);
+    }
+    
     @Transactional
     public void approveUser(Long userId) {
         userService.updateUserStatus(userId, UserStatus.APPROVED);

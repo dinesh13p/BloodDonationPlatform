@@ -1,13 +1,9 @@
 package bloodbank.controller;
 
-import bloodbank.entity.User;
-import bloodbank.entity.UserRole;
 import bloodbank.service.AdminService;
 import bloodbank.service.DonorService;
 import bloodbank.service.ReceiverService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,6 +30,7 @@ public class AdminController {
         model.addAttribute("pendingReceivers", adminService.getPendingReceivers());
         model.addAttribute("allDonors", adminService.getAllDonors());
         model.addAttribute("allReceivers", adminService.getAllReceivers());
+        model.addAttribute("restrictedUsers", adminService.getRestrictedUsers());
         return "admin/dashboard";
     }
     
@@ -65,6 +62,12 @@ public class AdminController {
     @PostMapping("/restrict")
     public String restrictUser(@RequestParam("userId") Long userId) {
         adminService.restrictUser(userId);
+        return "redirect:/admin/dashboard";
+    }
+    
+    @PostMapping("/delete")
+    public String deleteUser(@RequestParam("userId") Long userId) {
+        adminService.deleteUser(userId);
         return "redirect:/admin/dashboard";
     }
     

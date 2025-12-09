@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog - Sabaiko Blood Bank</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --background: 0 0% 100%;
+            --foreground: 222.2 84% 4.9%;
+            --muted-foreground: 215.4 16.3% 46.9%;
+            --border: 214.3 31.8% 91.4%;
+        }
+
+        .text-muted-foreground {
+            color: hsl(var(--muted-foreground));
+        }
+
+        .hover\:text-foreground:hover {
+            color: hsl(var(--foreground));
+        }
+
+        .border-border {
+            border-color: hsl(var(--border));
+        }
+
+        .container {
+            width: 100%;
+            margin: 0 auto;
+            padding: 0 2rem;
+            max-width: 1400px;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen bg-background text-foreground">
+    <section class="container py-16">
+        <h1 class="text-4xl font-bold mb-2">Blog</h1>
+        <p class="text-muted-foreground mb-6">Stories, updates, and tips about blood donation.</p>
+
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <!-- Blog Post 1 -->
+            <div class="bg-white rounded-lg border border-gray-200 shadow">
+                <div class="p-6">
+                    <h3 class="text-xl font-semibold mb-2">Why Donate Blood?</h3>
+                    <div class="text-sm text-muted-foreground mb-2">Mar 4, 2025</div>
+                    <p class="text-sm mb-4">Your single donation can save up to three lives.</p>
+                    <a href="#"
+                        class="inline-block px-4 py-2 border border-border rounded-md hover:bg-gray-50 text-sm">Read
+                        More</a>
+                </div>
+            </div>
+
+            <!-- Blog Post 2 -->
+            <div class="bg-white rounded-lg border border-gray-200 shadow">
+                <div class="p-6">
+                    <h3 class="text-xl font-semibold mb-2">Preparing for Donation</h3>
+                    <div class="text-sm text-muted-foreground mb-2">Feb 21, 2025</div>
+                    <p class="text-sm mb-4">Hydration, sleep, and a healthy meal make a difference.</p>
+                    <a href="#"
+                        class="inline-block px-4 py-2 border border-border rounded-md hover:bg-gray-50 text-sm">Read
+                        More</a>
+                </div>
+            </div>
+
+            <!-- Blog Post 3 -->
+            <div class="bg-white rounded-lg border border-gray-200 shadow">
+                <div class="p-6">
+                    <h3 class="text-xl font-semibold mb-2">After Donation Care</h3>
+                    <div class="text-sm text-muted-foreground mb-2">Jan 30, 2025</div>
+                    <p class="text-sm mb-4">What to do post-donation to recover quickly.</p>
+                    <a href="#"
+                        class="inline-block px-4 py-2 border border-border rounded-md hover:bg-gray-50 text-sm">Read
+                        More</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <div th:replace="~{layout/footer :: footer}"></div>
+</body>
+
+</html>

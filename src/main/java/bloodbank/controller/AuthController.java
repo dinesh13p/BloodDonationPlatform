@@ -43,8 +43,8 @@ public class AuthController {
             String role = auth.getAuthorities().iterator().next().getAuthority();
             return switch (role) {
                 case "ROLE_ADMIN" -> "redirect:/admin/dashboard";
-                case "ROLE_DONOR" -> "redirect:/donor/profile";
-                case "ROLE_RECEIVER" -> "redirect:/receiver/profile";
+                case "ROLE_DONOR" -> "redirect:/donor/dashboard";
+                case "ROLE_RECEIVER" -> "redirect:/receiver/dashboard";
                 default -> "auth/login";
             };
         }
@@ -78,6 +78,12 @@ public class AuthController {
             model.addAttribute("bloodGroups", BloodGroup.values());
             return "auth/register-donor";
         }
+        
+        registrationDTO.setAddress(composeAddress(
+                registrationDTO.getProvince(),
+                registrationDTO.getDistrict(),
+                registrationDTO.getPalika(),
+                registrationDTO.getWardNo()));
         
         User user = new User();
         user.setUsername(registrationDTO.getUsername());
@@ -135,6 +141,12 @@ public class AuthController {
             model.addAttribute("bloodGroups", BloodGroup.values());
             return "auth/register-receiver";
         }
+
+        registrationDTO.setAddress(composeAddress(
+                registrationDTO.getProvince(),
+                registrationDTO.getDistrict(),
+                registrationDTO.getPalika(),
+                registrationDTO.getWardNo()));
         
         User user = new User();
         user.setUsername(registrationDTO.getUsername());
@@ -158,6 +170,27 @@ public class AuthController {
         
         String encodedUsername = URLEncoder.encode(registrationDTO.getUsername(), StandardCharsets.UTF_8);
         return "redirect:/auth/login?registered=true&username=" + encodedUsername;
+    }
+
+    private String composeAddress(String province, String district, String palika, String wardNo) {
+        StringBuilder builder = new StringBuilder();
+        if (province != null && !province.isBlank()) {
+            builder.append(province.trim());
+        }
+        if (district != null && !district.isBlank()) {
+            if (builder.length() > 0) builder.append(", ");
+            builder.append(district.trim());
+        }
+        if (palika != null && !palika.isBlank()) {
+            if (builder.length() > 0) builder.append(", ");
+            builder.append(palika.trim());
+        }
+        if (wardNo != null && !wardNo.isBlank()) {
+            if (builder.length() > 0) builder.append(" - ");
+            builder.append("Ward ").append(wardNo.trim());
+        }
+        String composed = builder.toString();
+        return composed.isBlank() ? "Not Provided" : composed;
     }
 }
 
