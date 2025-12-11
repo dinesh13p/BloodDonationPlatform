@@ -382,4 +382,6 @@ This project is for educational purposes.
 
 ## Author
 
-Sabaiko Blood Bank Platform
+Dinesh Poudel
+**Contact Dinesh Poudel:**
+[dinesh2004.com.np](https://www.dinesh2004.com.np)
