@@ -64,7 +64,7 @@ public class ReceiverController {
     }
 
     @GetMapping("/search")
-    public String searchDonors(@RequestParam(required = false) String bloodGroup,
+    public String searchDonors(@RequestParam(value = "bloodGroup", required = false) String bloodGroup,
             Model model) {
         List<DonorDetails> donors = new java.util.ArrayList<>();
         String errorMessage = null;
