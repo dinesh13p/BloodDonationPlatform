@@ -44,3 +44,8 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+// Enable parameter name retention for Spring MVC
+tasks.withType(JavaCompile) {
+	options.compilerArgs.add('-parameters')
+}
