@@ -25,101 +25,142 @@
     </nav>
     
     <div class="container mt-4">
-        <h2 class="mb-4">Search Donors</h2>
+        <h2 class="mb-4"><i class="bi bi-search"></i> Search Donors</h2>
         
-        <div th:if="${param.verified}" class="alert alert-success">
-            Donation verified successfully!
+        <div th:if="${param.verified}" class="alert alert-success alert-dismissible fade show">
+            <i class="bi bi-check-circle"></i> Donation verified successfully!
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
         
-        <div class="card mb-4">
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show">
+            <i class="bi bi-exclamation-triangle"></i> <span th:text="${errorMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        
+        <div th:if="${!hasReceiverAddress}" class="alert alert-warning">
+            <i class="bi bi-info-circle"></i> <strong>Note:</strong> Please update your profile with your address details to enable location-based donor sorting.
+        </div>
+        
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0"><i class="bi bi-funnel"></i> Search Filters</h5>
+            </div>
             <div class="card-body">
                 <form th:action="@{/receiver/search}" method="get">
                     <div class="row">
-                        <div class="col-md-4 mb-3">
-                            <label for="bloodGroup" class="form-label">Blood Group</label>
-                            <select class="form-select" id="bloodGroup" name="bloodGroup">
-                                <option value="">All Blood Groups</option>
+                        <div class="col-md-6 mb-3">
+                            <label for="bloodGroup" class="form-label">
+                                Blood Group <span class="text-danger">*</span>
+                            </label>
+                            <select class="form-select" id="bloodGroup" name="bloodGroup" required>
+                                <option value="">-- Select Blood Group --</option>
                                 <option th:each="bg : ${bloodGroups}" 
                                         th:value="${bg.name()}" 
                                         th:text="${bg.displayName}"
                                         th:selected="${selectedBloodGroup == bg.name()}"></option>
                             </select>
+                            <small class="form-text text-muted">Blood group is required to search for donors.</small>
                         </div>
-                        <div class="col-md-3 mb-3">
-                            <label for="province" class="form-label">Province</label>
-                            <input type="text" class="form-control" id="province" name="province" 
-                                   th:value="${selectedProvince}">
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label for="district" class="form-label">District</label>
-                            <input type="text" class="form-control" id="district" name="district"
-                                   th:value="${selectedDistrict}">
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label for="palika" class="form-label">Palika</label>
-                            <input type="text" class="form-control" id="palika" name="palika"
-                                   th:value="${selectedPalika}">
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label for="wardNo" class="form-label">Ward No.</label>
-                            <input type="text" class="form-control" id="wardNo" name="wardNo"
-                                   th:value="${selectedWardNo}">
+                        <div class="col-md-6 mb-3 d-flex align-items-end">
+                            <button type="submit" class="btn btn-danger btn-lg w-100">
+                                <i class="bi bi-search"></i> Search Donors
+                            </button>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-danger">Search</button>
+                    <div th:if="${hasReceiverAddress}" class="mt-2">
+                        <small class="text-muted">
+                            <i class="bi bi-geo-alt"></i> Results will be sorted by proximity to your address: 
+                            <strong th:text="${receiverAddress}"></strong>
+                        </small>
+                    </div>
                 </form>
             </div>
         </div>
         
-        <div class="card">
-            <div class="card-header">
-                <h5>Available Donors</h5>
+        <div class="card shadow-sm" th:if="${selectedBloodGroup != null && !selectedBloodGroup.isEmpty()}">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-people"></i> Search Results 
+                    <span class="badge bg-light text-dark ms-2" th:text="${#lists.size(donors)} + ' donor(s) found'"></span>
+                </h5>
             </div>
             <div class="card-body">
-                <div th:if="${#lists.isEmpty(donors)}" class="text-muted">
-                    No donors found matching your criteria.
+                <div th:if="${#lists.isEmpty(donors)}" class="alert alert-info">
+                    <i class="bi bi-info-circle"></i> No verified, available donors found with blood group 
+                    <strong th:text="${selectedBloodGroup}"></strong>.
                 </div>
                 <div th:if="${!#lists.isEmpty(donors)}">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Blood Group</th>
-                                <th>Province</th>
-                                <th>District</th>
-                                <th>Palika</th>
-                                <th>Ward No.</th>
-                                <th>Phone</th>
-                                <th>Email</th>
-                                <th>Stars</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr th:each="donor : ${donors}">
-                                <td th:text="${donor.user.fullName}"></td>
-                                <td th:text="${donor.bloodGroup.displayName}"></td>
-                                <td th:text="${donor.province ?: 'N/A'}"></td>
-                                <td th:text="${donor.district ?: 'N/A'}"></td>
-                                <td th:text="${donor.palika ?: 'N/A'}"></td>
-                                <td th:text="${donor.wardNo ?: 'N/A'}"></td>
-                                <td th:text="${donor.user.phone}"></td>
-                                <td th:text="${donor.user.email}"></td>
-                                <td>
-                                    <span th:each="i : ${#numbers.sequence(1, donor.stars)}">
-                                        <i class="bi bi-star-fill text-warning"></i>
-                                    </span>
-                                </td>
-                                <td>
-                                    <form th:action="@{/receiver/verify-donation}" method="post" class="d-inline">
-                                        <input type="hidden" name="donorId" th:value="${donor.user.id}">
-                                        <button type="submit" class="btn btn-sm btn-success">Verify Donation</button>
-                                    </form>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div class="table-responsive">
+                        <table class="table table-hover table-striped">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th style="width: 50px;">#</th>
+                                    <th>Name</th>
+                                    <th>Blood Group</th>
+                                    <th>Address</th>
+                                    <th>Contact</th>
+                                    <th>Rating</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="donor, iterStat : ${donors}">
+                                    <td class="fw-bold text-primary" th:text="${iterStat.count}"></td>
+                                    <td>
+                                        <strong th:text="${donor.user.fullName}"></strong>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-danger fs-6" th:text="${donor.bloodGroup.displayName}"></span>
+                                    </td>
+                                    <td>
+                                        <div th:text="${donor.composeAddress()}"></div>
+                                        <small class="text-muted">
+                                            <span th:if="${donor.province}" th:text="${donor.province}"></span>
+                                            <span th:if="${donor.district}">, <span th:text="${donor.district}"></span></span>
+                                            <span th:if="${donor.palika}">, <span th:text="${donor.palika}"></span></span>
+                                            <span th:if="${donor.wardNo}"> - Ward <span th:text="${donor.wardNo}"></span></span>
+                                        </small>
+                                    </td>
+                                    <td>
+                                        <div><i class="bi bi-telephone"></i> <span th:text="${donor.user.phone}"></span></div>
+                                        <div><i class="bi bi-envelope"></i> <span class="small" th:text="${donor.user.email}"></span></div>
+                                    </td>
+                                    <td>
+                                        <div th:if="${donor.stars > 0}">
+                                            <span th:each="i : ${#numbers.sequence(1, donor.stars)}">
+                                                <i class="bi bi-star-fill text-warning"></i>
+                                            </span>
+                                            <span class="badge bg-warning text-dark ms-1" th:text="${donor.stars}"></span>
+                                        </div>
+                                        <span th:if="${donor.stars == 0}" class="text-muted">No ratings yet</span>
+                                    </td>
+                                    <td>
+                                        <form th:action="@{/receiver/verify-donation}" method="post" class="d-inline">
+                                            <input type="hidden" name="donorId" th:value="${donor.user.id}">
+                                            <button type="submit" class="btn btn-sm btn-success">
+                                                <i class="bi bi-check-circle"></i> Verify Donation
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="mt-3 p-3 bg-light rounded">
+                        <small class="text-muted">
+                            <i class="bi bi-info-circle"></i> 
+                            <strong>Note:</strong> Donors are sorted by proximity to your address (same ward > same palika > same district > same province). 
+                            Results with the same proximity are sorted alphabetically by name.
+                        </small>
+                    </div>
                 </div>
+            </div>
+        </div>
+        
+        <div th:if="${selectedBloodGroup == null || selectedBloodGroup.isEmpty()}" class="card shadow-sm">
+            <div class="card-body text-center py-5">
+                <i class="bi bi-search display-1 text-muted"></i>
+                <p class="text-muted mt-3">Please select a blood group to search for available donors.</p>
             </div>
         </div>
     </div>

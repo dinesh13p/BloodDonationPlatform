@@ -10,6 +10,7 @@ import bloodbank.service.DonationHistoryService;
 import bloodbank.service.ReceiverService;
 import bloodbank.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -25,6 +26,7 @@ import java.util.Optional;
 
 @Controller
 @RequestMapping("/receiver")
+@PreAuthorize("hasRole('RECEIVER')")
 public class ReceiverController {
 
     @Autowired
@@ -63,56 +65,37 @@ public class ReceiverController {
 
     @GetMapping("/search")
     public String searchDonors(@RequestParam(required = false) String bloodGroup,
-            @RequestParam(required = false) String province,
-            @RequestParam(required = false) String district,
-            @RequestParam(required = false) String palika,
-            @RequestParam(required = false) String wardNo,
             Model model) {
-        List<DonorDetails> donors;
-
+        List<DonorDetails> donors = new java.util.ArrayList<>();
+        String errorMessage = null;
+        
+        // Get current receiver's details for proximity calculation
+        User currentUser = getCurrentUser();
+        Optional<ReceiverDetails> receiverDetailsOpt = receiverService.findByUser(currentUser);
+        ReceiverDetails receiverDetails = receiverDetailsOpt.orElse(null);
+        
+        // Blood group is required for search
         if (bloodGroup != null && !bloodGroup.isEmpty()) {
             try {
                 BloodGroup bg = BloodGroup.valueOf(bloodGroup);
-                donors = donorService.findByBloodGroupAndAvailability(bg, true);
+                // Use proximity-based sorting
+                donors = donorService.findDonorsByBloodGroupSortedByProximity(bg, receiverDetails);
             } catch (IllegalArgumentException e) {
-                donors = donorService.getAllDonors().stream()
-                        .filter(d -> d.getAvailability())
-                        .toList();
+                errorMessage = "Invalid blood group selected.";
             }
-        } else {
-            donors = donorService.getAllDonors().stream()
-                    .filter(d -> d.getAvailability())
-                    .toList();
         }
-
-        if (province != null && !province.isEmpty()) {
-            donors = donors.stream()
-                    .filter(d -> province.equalsIgnoreCase(d.getProvince()))
-                    .toList();
+        
+        // Add receiver address info for display
+        if (receiverDetails != null) {
+            model.addAttribute("receiverAddress", receiverDetails.composeAddress());
         }
-        if (district != null && !district.isEmpty()) {
-            donors = donors.stream()
-                    .filter(d -> district.equalsIgnoreCase(d.getDistrict()))
-                    .toList();
-        }
-        if (palika != null && !palika.isEmpty()) {
-            donors = donors.stream()
-                    .filter(d -> palika.equalsIgnoreCase(d.getPalika()))
-                    .toList();
-        }
-        if (wardNo != null && !wardNo.isEmpty()) {
-            donors = donors.stream()
-                    .filter(d -> wardNo.equalsIgnoreCase(d.getWardNo()))
-                    .toList();
-        }
-
+        
         model.addAttribute("donors", donors);
         model.addAttribute("bloodGroups", BloodGroup.values());
         model.addAttribute("selectedBloodGroup", bloodGroup);
-        model.addAttribute("selectedProvince", province);
-        model.addAttribute("selectedDistrict", district);
-        model.addAttribute("selectedPalika", palika);
-        model.addAttribute("selectedWardNo", wardNo);
+        model.addAttribute("errorMessage", errorMessage);
+        model.addAttribute("hasReceiverAddress", receiverDetails != null && 
+            receiverDetails.getProvince() != null && !receiverDetails.getProvince().isBlank());
         return "receiver/search-donor";
     }
 

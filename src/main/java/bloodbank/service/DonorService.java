@@ -3,14 +3,18 @@ package bloodbank.service;
 import bloodbank.dto.DonorUpdateDTO;
 import bloodbank.entity.BloodGroup;
 import bloodbank.entity.DonorDetails;
+import bloodbank.entity.ReceiverDetails;
 import bloodbank.entity.User;
+import bloodbank.entity.UserStatus;
 import bloodbank.repository.DonorDetailsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class DonorService {
@@ -120,6 +124,89 @@ public class DonorService {
             .stream()
             .filter(d -> d.getUser() != null && d.getUser().getStatus() == bloodbank.entity.UserStatus.APPROVED)
             .toList();
+    }
+    
+    /**
+     * Find verified, available donors by blood group and sort them by proximity to receiver's address.
+     * Proximity score calculation:
+     * - Same province: +1000
+     * - Same district: +100
+     * - Same palika: +10
+     * - Same ward: +1
+     * 
+     * Results are sorted by score descending, then by fullName ascending.
+     * 
+     * @param bloodGroup The required blood group
+     * @param receiverDetails The receiver's details for proximity calculation
+     * @return Sorted list of donors (nearest first)
+     */
+    public List<DonorDetails> findDonorsByBloodGroupSortedByProximity(BloodGroup bloodGroup, ReceiverDetails receiverDetails) {
+        // Find all verified, available donors with the specified blood group
+        List<DonorDetails> donors = donorDetailsRepository.findVerifiedAvailableDonorsByBloodGroup(
+            bloodGroup, 
+            UserStatus.APPROVED
+        );
+        
+        // If receiver has no address details, return unsorted list
+        if (receiverDetails == null || 
+            (receiverDetails.getProvince() == null || receiverDetails.getProvince().isBlank())) {
+            return donors.stream()
+                .filter(d -> d.getUser() != null)
+                .sorted(Comparator.comparing(d -> d.getUser().getFullName()))
+                .collect(Collectors.toList());
+        }
+        
+        String receiverProvince = receiverDetails.getProvince() != null ? receiverDetails.getProvince().trim() : "";
+        String receiverDistrict = receiverDetails.getDistrict() != null ? receiverDetails.getDistrict().trim() : "";
+        String receiverPalika = receiverDetails.getPalika() != null ? receiverDetails.getPalika().trim() : "";
+        String receiverWardNo = receiverDetails.getWardNo() != null ? receiverDetails.getWardNo().trim() : "";
+        
+        // Compute proximity score and sort
+        return donors.stream()
+            .filter(donor -> donor.getUser() != null) // Filter out donors without user
+            .map(donor -> {
+                // Calculate proximity score
+                int score = 0;
+                
+                String donorProvince = donor.getProvince() != null ? donor.getProvince().trim() : "";
+                String donorDistrict = donor.getDistrict() != null ? donor.getDistrict().trim() : "";
+                String donorPalika = donor.getPalika() != null ? donor.getPalika().trim() : "";
+                String donorWardNo = donor.getWardNo() != null ? donor.getWardNo().trim() : "";
+                
+                if (!receiverProvince.isEmpty() && receiverProvince.equalsIgnoreCase(donorProvince)) {
+                    score += 1000;
+                }
+                if (!receiverDistrict.isEmpty() && receiverDistrict.equalsIgnoreCase(donorDistrict)) {
+                    score += 100;
+                }
+                if (!receiverPalika.isEmpty() && receiverPalika.equalsIgnoreCase(donorPalika)) {
+                    score += 10;
+                }
+                if (!receiverWardNo.isEmpty() && receiverWardNo.equalsIgnoreCase(donorWardNo)) {
+                    score += 1;
+                }
+                
+                return new DonorWithScore(donor, score);
+            })
+            .sorted(Comparator
+                .comparing((DonorWithScore d) -> -d.score) // Descending by score (negative for reverse)
+                .thenComparing(d -> d.donor.getUser() != null ? d.donor.getUser().getFullName() : "") // Ascending by name
+            )
+            .map(d -> d.donor)
+            .collect(Collectors.toList());
+    }
+    
+    /**
+     * Helper class to hold donor with its proximity score
+     */
+    private static class DonorWithScore {
+        final DonorDetails donor;
+        final int score;
+        
+        DonorWithScore(DonorDetails donor, int score) {
+            this.donor = donor;
+            this.score = score;
+        }
     }
 }
 

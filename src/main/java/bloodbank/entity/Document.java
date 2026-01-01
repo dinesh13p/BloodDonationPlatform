@@ -1,6 +1,7 @@
 package bloodbank.entity;
 
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "documents")
@@ -23,6 +24,16 @@ public class Document {
     
     @Column(name = "file_name")
     private String fileName;
+    
+    @Column(name = "upload_date", nullable = false)
+    private LocalDateTime uploadDate;
+    
+    @PrePersist
+    protected void onCreate() {
+        if (uploadDate == null) {
+            uploadDate = LocalDateTime.now();
+        }
+    }
     
     // Getters and Setters
     public Long getId() {
@@ -63,6 +74,14 @@ public class Document {
     
     public void setFileName(String fileName) {
         this.fileName = fileName;
+    }
+    
+    public LocalDateTime getUploadDate() {
+        return uploadDate;
+    }
+    
+    public void setUploadDate(LocalDateTime uploadDate) {
+        this.uploadDate = uploadDate;
     }
 }
 
