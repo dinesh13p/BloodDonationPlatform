@@ -2,9 +2,11 @@ package bloodbank.controller;
 
 import bloodbank.dto.DonorUpdateDTO;
 import bloodbank.entity.DonorDetails;
+import bloodbank.entity.ReceiverDetails;
 import bloodbank.entity.User;
 import bloodbank.service.DonorService;
 import bloodbank.service.FileUploadService;
+import bloodbank.service.ReceiverService;
 import bloodbank.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,7 +20,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Controller
@@ -31,6 +35,9 @@ public class DonorController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private ReceiverService receiverService;
 
     @Autowired
     private FileUploadService fileUploadService;
@@ -153,6 +160,27 @@ public class DonorController {
         model.addAttribute("query", query);
         model.addAttribute("type", type);
         return "donor/search-users";
+    }
+
+    @GetMapping("/search-receivers")
+    public String searchReceivers(@RequestParam(value = "phone", required = false) String phone, Model model) {
+        List<User> receivers = userService.findVerifiedReceivers(Optional.ofNullable(phone));
+        
+        // Create a map of User ID to ReceiverDetails for easy lookup in template
+        Map<Long, ReceiverDetails> receiverDetailsMap = new HashMap<>();
+        for (User receiver : receivers) {
+            receiverService.findByUser(receiver).ifPresent(details -> 
+                receiverDetailsMap.put(receiver.getId(), details)
+            );
+        }
+        
+        model.addAttribute("receivers", receivers);
+        model.addAttribute("receiverDetailsMap", receiverDetailsMap);
+        model.addAttribute("searchPhone", phone);
+        model.addAttribute("hasSearchPhone", phone != null && !phone.isBlank());
+        model.addAttribute("noMatch", phone != null && !phone.isBlank() && receivers.isEmpty());
+        
+        return "donor/search-receivers";
     }
 
     @PostMapping("/delete")

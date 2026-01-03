@@ -109,4 +109,21 @@ public class UserService implements UserDetailsService {
     public List<User> searchByFullName(String fullName) {
         return userRepository.findByFullNameContainingIgnoreCase(fullName);
     }
+
+    /**
+     * Find verified receivers, optionally filtered by phone number.
+     * If phone is provided, returns exact match (0 or 1 result).
+     * If phone is not provided or empty, returns all verified receivers.
+     */
+    public List<User> findVerifiedReceivers(Optional<String> phone) {
+        if (phone.isPresent() && !phone.get().isBlank()) {
+            return userRepository.findByPhoneAndRoleAndStatus(
+                    phone.get().trim(), 
+                    UserRole.RECEIVER, 
+                    UserStatus.APPROVED
+            ).map(List::of).orElse(List.of());
+        } else {
+            return userRepository.findByRoleAndStatus(UserRole.RECEIVER, UserStatus.APPROVED);
+        }
+    }
 }

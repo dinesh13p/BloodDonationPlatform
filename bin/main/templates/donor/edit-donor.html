@@ -28,52 +28,10 @@
 </head>
 
 <body class="min-h-screen bg-gray-50">
-    <nav class="bg-gradient-hero shadow-lg">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
-                <div class="flex items-center space-x-2">
-                    <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center">
-                        <div class="w-4 h-4 bg-primary rounded-full"></div>
-                    </div>
-                    <span class="text-white font-bold text-xl">SABAIKO</span>
-                    <span class="text-white text-sm">Blood Bank</span>
-                </div>
-                <div class="hidden md:flex items-center space-x-6">
-                    <a th:href="@{/donor/dashboard}"
-                        class="text-white hover:text-white/80 px-3 py-2 text-sm font-medium">Dashboard</a>
-                    <a th:href="@{/donor/profile}"
-                        class="text-white hover:text-white/80 px-3 py-2 text-sm font-medium">My Profile</a>
-                    <a th:href="@{/about}" class="text-white hover:text-white/80 px-3 py-2 text-sm font-medium">About</a>
-                    <a th:href="@{/blog}" class="text-white hover:text-white/80 px-3 py-2 text-sm font-medium">Blog</a>
-                    <a th:href="@{/faq}" class="text-white hover:text-white/80 px-3 py-2 text-sm font-medium">FAQ</a>
-                    <form th:action="@{/logout}" method="post" class="inline">
-                        <button type="submit"
-                            class="text-white hover:text-white/80 px-3 py-2 text-sm font-medium">Logout</button>
-                    </form>
-                </div>
-                <button id="donor-edit-menu-button" class="md:hidden text-white p-2 rounded hover:bg-white/10" type="button">
-                    <svg id="donor-edit-menu-icon" class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-                    </svg>
-                    <svg id="donor-edit-close-icon" class="h-6 w-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                    </svg>
-                </button>
-            </div>
-            <div id="donor-edit-mobile-menu" class="md:hidden hidden pb-3 space-y-2">
-                <a th:href="@{/donor/dashboard}" class="block text-white px-3 py-2 text-sm font-medium hover:bg-white/10 rounded">Dashboard</a>
-                <a th:href="@{/donor/profile}" class="block text-white px-3 py-2 text-sm font-medium hover:bg-white/10 rounded">My Profile</a>
-                <a th:href="@{/about}" class="block text-white px-3 py-2 text-sm font-medium hover:bg-white/10 rounded">About</a>
-                <a th:href="@{/blog}" class="block text-white px-3 py-2 text-sm font-medium hover:bg-white/10 rounded">Blog</a>
-                <a th:href="@{/faq}" class="block text-white px-3 py-2 text-sm font-medium hover:bg-white/10 rounded">FAQ</a>
-                <form th:action="@{/logout}" method="post" class="inline-block w-full">
-                    <button type="submit" class="w-full text-left text-white px-3 py-2 text-sm font-medium hover:bg-white/10 rounded">Logout</button>
-                </form>
-            </div>
-        </div>
-    </nav>
+    <!-- Sidebar -->
+    <div th:replace="~{layout/sidebar :: sidebar}"></div>
 
-    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="lg:ml-72 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div class="bg-white rounded-lg shadow border border-gray-200">
             <div class="px-6 py-4 border-b border-gray-200">
                 <h5 class="text-lg font-semibold">Edit Profile</h5>
@@ -92,7 +50,8 @@
                             <span class="text-primary font-semibold"
                                 th:text="${donorDetails != null ? donorDetails.bloodGroup.displayName : 'Not set'}"></span>
                         </div>
-                        <p class="text-xs text-gray-500 mt-1">Contact admin if your blood type needs to be corrected.</p>
+                        <p class="text-xs text-gray-500 mt-1">Contact admin if your blood type needs to be corrected.
+                        </p>
                     </div>
 
                     <div>
@@ -136,13 +95,15 @@
 
                         <div class="bg-gray-50 border border-dashed border-border rounded-lg p-3">
                             <input type="hidden" id="address" name="address"
-                                   th:value="${donorDetails != null ? donorDetails.address : ''}">
+                                th:value="${donorDetails != null ? donorDetails.address : ''}">
                             <p class="text-sm text-gray-700">
                                 Full Address:
                                 <span id="addressPreview" class="font-semibold"
-                                      th:text="${donorDetails != null ? donorDetails.address : 'Not Provided'}">Not Provided</span>
+                                    th:text="${donorDetails != null ? donorDetails.address : 'Not Provided'}">Not
+                                    Provided</span>
                             </p>
-                            <p class="text-xs text-gray-500">Address is stored as Province, District, Municipality, Ward.</p>
+                            <p class="text-xs text-gray-500">Address is stored as Province, District, Municipality,
+                                Ward.</p>
                         </div>
                     </div>
 
@@ -162,8 +123,7 @@
 
                     <div>
                         <label for="bio" class="block text-sm font-medium mb-1">Bio</label>
-                        <textarea id="bio" name="bio" rows="3"
-                            class="w-full px-3 py-2 border border-border rounded-md"
+                        <textarea id="bio" name="bio" rows="3" class="w-full px-3 py-2 border border-border rounded-md"
                             th:text="${donorDetails != null ? donorDetails.bio : ''}"></textarea>
                     </div>
 
@@ -179,7 +139,7 @@
         </div>
     </div>
     <script>
-        const donorAddressFields = ['province','district','palika','wardNo'];
+        const donorAddressFields = ['province', 'district', 'palika', 'wardNo'];
         const donorPreview = document.getElementById('addressPreview');
         const donorHiddenAddress = document.getElementById('address');
 
@@ -212,19 +172,7 @@
         });
         updateDonorAddress();
     </script>
-    <script>
-        const deBtn = document.getElementById('donor-edit-menu-button');
-        const deMenu = document.getElementById('donor-edit-mobile-menu');
-        const deMenuIcon = document.getElementById('donor-edit-menu-icon');
-        const deCloseIcon = document.getElementById('donor-edit-close-icon');
-        if (deBtn && deMenu && deMenuIcon && deCloseIcon) {
-            deBtn.addEventListener('click', () => {
-                deMenu.classList.toggle('hidden');
-                deMenuIcon.classList.toggle('hidden');
-                deCloseIcon.classList.toggle('hidden');
-            });
-        }
-    </script>
+
 </body>
 
 </html>

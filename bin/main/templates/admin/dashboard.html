@@ -44,50 +44,10 @@
 </head>
 
 <body class="min-h-screen bg-gray-50">
-    <!-- Navigation -->
-    <nav class="bg-gradient-hero shadow-lg">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
-                <div class="flex items-center space-x-2">
-                    <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center">
-                        <div class="w-4 h-4 bg-primary rounded-full"></div>
-                    </div>
-                    <span class="text-white font-bold text-xl">SABAIKO</span>
-                    <span class="text-white text-sm">Blood Bank</span>
-                </div>
-                <div class="hidden md:flex items-center space-x-6">
-                    <a th:href="@{/admin/dashboard}"
-                        class="text-white hover:text-white/80 px-3 py-2 text-sm font-medium">Dashboard</a>
-                    <a th:href="@{/admin/pending}"
-                        class="text-white hover:text-white/80 px-3 py-2 text-sm font-medium">Pending Users</a>
-                    <a th:href="@{/admin/verified}"
-                        class="text-white hover:text-white/80 px-3 py-2 text-sm font-medium">Verified Users</a>
-                    <form th:action="@{/logout}" method="post" class="inline">
-                        <button type="submit"
-                            class="text-white hover:text-white/80 px-3 py-2 text-sm font-medium">Logout</button>
-                    </form>
-                </div>
-                <button id="admin-menu-button" class="md:hidden text-white p-2 rounded hover:bg-white/10" type="button">
-                    <svg id="admin-menu-icon" class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-                    </svg>
-                    <svg id="admin-close-icon" class="h-6 w-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                    </svg>
-                </button>
-            </div>
-            <div id="admin-mobile-menu" class="md:hidden hidden pb-3 space-y-2">
-                <a th:href="@{/admin/dashboard}" class="block text-white px-3 py-2 text-sm font-medium hover:bg-white/10 rounded">Dashboard</a>
-                <a th:href="@{/admin/pending}" class="block text-white px-3 py-2 text-sm font-medium hover:bg-white/10 rounded">Pending Users</a>
-                <a th:href="@{/admin/verified}" class="block text-white px-3 py-2 text-sm font-medium hover:bg-white/10 rounded">Verified Users</a>
-                <form th:action="@{/logout}" method="post" class="inline-block w-full">
-                    <button type="submit" class="w-full text-left text-white px-3 py-2 text-sm font-medium hover:bg-white/10 rounded">Logout</button>
-                </form>
-            </div>
-        </div>
-    </nav>
+    <!-- Sidebar -->
+    <div th:replace="~{layout/sidebar :: sidebar}"></div>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="lg:ml-72 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <h2 class="text-3xl font-bold mb-6">Admin Dashboard</h2>
 
         <!-- Statistics Cards -->
@@ -187,16 +147,17 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Restricted Users -->
         <div class="mt-8 bg-white rounded-lg shadow border border-gray-200">
             <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
                 <h5 class="text-lg font-semibold">Restricted Accounts</h5>
-                <span class="text-sm text-muted-foreground"
-                    th:text="${#lists.size(restrictedUsers)} + ' account(s)'">0 account(s)</span>
+                <span class="text-sm text-muted-foreground" th:text="${#lists.size(restrictedUsers)} + ' account(s)'">0
+                    account(s)</span>
             </div>
             <div class="p-6">
-                <div th:if="${#lists.isEmpty(restrictedUsers)}" class="text-muted-foreground">No restricted accounts.</div>
+                <div th:if="${#lists.isEmpty(restrictedUsers)}" class="text-muted-foreground">No restricted accounts.
+                </div>
                 <div th:if="${!#lists.isEmpty(restrictedUsers)}" class="overflow-x-auto">
                     <table class="min-w-full text-sm">
                         <thead>
@@ -229,19 +190,7 @@
             </div>
         </div>
     </div>
-    <script>
-        const adminBtn = document.getElementById('admin-menu-button');
-        const adminMenu = document.getElementById('admin-mobile-menu');
-        const adminMenuIcon = document.getElementById('admin-menu-icon');
-        const adminCloseIcon = document.getElementById('admin-close-icon');
-        if (adminBtn && adminMenu && adminMenuIcon && adminCloseIcon) {
-            adminBtn.addEventListener('click', () => {
-                adminMenu.classList.toggle('hidden');
-                adminMenuIcon.classList.toggle('hidden');
-                adminCloseIcon.classList.toggle('hidden');
-            });
-        }
-    </script>
+
 </body>
 
 </html>

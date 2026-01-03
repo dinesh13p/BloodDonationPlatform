@@ -23,33 +23,10 @@
 </head>
 
 <body class="min-h-screen bg-gray-50">
-    <nav class="bg-gradient-hero shadow-lg">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
-                <div class="flex items-center space-x-2">
-                    <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center">
-                        <div class="w-4 h-4 bg-primary rounded-full"></div>
-                    </div>
-                    <span class="text-white font-bold text-xl">SABAIKO</span>
-                    <span class="text-white text-sm">Blood Bank</span>
-                </div>
-                <div class="flex items-center space-x-6">
-                    <a th:href="@{/receiver/dashboard}"
-                        class="text-white hover:text-white/80 px-3 py-2 text-sm font-medium">Dashboard</a>
-                    <a th:href="@{/receiver/profile}"
-                        class="text-white hover:text-white/80 px-3 py-2 text-sm font-medium">Profile</a>
-                    <a th:href="@{/receiver/search}"
-                        class="text-white hover:text-white/80 px-3 py-2 text-sm font-medium">Search Donors</a>
-                    <form th:action="@{/logout}" method="post" class="inline">
-                        <button type="submit"
-                            class="text-white hover:text-white/80 px-3 py-2 text-sm font-medium">Logout</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </nav>
+    <!-- Sidebar -->
+    <div th:replace="~{layout/sidebar :: sidebar}"></div>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="lg:ml-72 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div class="bg-white rounded-lg shadow border border-gray-200 p-6 text-center">
                 <h4 class="text-xl font-bold mb-1" th:text="${user.fullName}">Name</h4>

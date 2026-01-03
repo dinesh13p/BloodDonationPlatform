@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Receivers - Sabaiko Blood Bank</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary: 348 83% 47%;
+            --gradient-hero: linear-gradient(135deg, hsl(348 83% 47%) 0%, hsl(0 70% 60%) 50%, hsl(355 70% 65%) 100%);
+        }
+
+        .bg-gradient-hero {
+            background-image: var(--gradient-hero);
+        }
+
+        .bg-primary {
+            background-color: hsl(var(--primary));
+        }
+    </style>
+</head>
+
+<body class="min-h-screen bg-gray-50">
+    <nav class="bg-gradient-hero shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center">
+                        <div class="w-4 h-4 bg-primary rounded-full"></div>
+                    </div>
+                    <span class="text-white font-bold text-xl">SABAIKO</span>
+                    <span class="text-white text-sm">Blood Bank</span>
+                </div>
+                <div class="hidden md:flex items-center space-x-6">
+                    <a th:href="@{/donor/dashboard}"
+                        class="text-white hover:text-white/80 px-3 py-2 text-sm font-medium">Dashboard</a>
+                    <a th:href="@{/donor/profile}"
+                        class="text-white hover:text-white/80 px-3 py-2 text-sm font-medium">My Profile</a>
+                    <a th:href="@{/donor/search-receivers}"
+                        class="text-white hover:text-white/80 px-3 py-2 text-sm font-medium underline">Search Receivers</a>
+                    <a th:href="@{/about}" class="text-white hover:text-white/80 px-3 py-2 text-sm font-medium">About</a>
+                    <a th:href="@{/blog}" class="text-white hover:text-white/80 px-3 py-2 text-sm font-medium">Blog</a>
+                    <a th:href="@{/faq}" class="text-white hover:text-white/80 px-3 py-2 text-sm font-medium">FAQ</a>
+                    <form th:action="@{/logout}" method="post" class="inline">
+                        <button type="submit"
+                            class="text-white hover:text-white/80 px-3 py-2 text-sm font-medium">Logout</button>
+                    </form>
+                </div>
+                <button id="donor-menu-button" class="md:hidden text-white p-2 rounded hover:bg-white/10" type="button">
+                    <svg id="donor-menu-icon" class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                    <svg id="donor-close-icon" class="h-6 w-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div id="donor-mobile-menu" class="md:hidden hidden pb-3 space-y-2">
+                <a th:href="@{/donor/dashboard}" class="block text-white px-3 py-2 text-sm font-medium hover:bg-white/10 rounded">Dashboard</a>
+                <a th:href="@{/donor/profile}" class="block text-white px-3 py-2 text-sm font-medium hover:bg-white/10 rounded">My Profile</a>
+                <a th:href="@{/donor/search-receivers}" class="block text-white px-3 py-2 text-sm font-medium hover:bg-white/10 rounded underline">Search Receivers</a>
+                <a th:href="@{/about}" class="block text-white px-3 py-2 text-sm font-medium hover:bg-white/10 rounded">About</a>
+                <a th:href="@{/blog}" class="block text-white px-3 py-2 text-sm font-medium hover:bg-white/10 rounded">Blog</a>
+                <a th:href="@{/faq}" class="block text-white px-3 py-2 text-sm font-medium hover:bg-white/10 rounded">FAQ</a>
+                <form th:action="@{/logout}" method="post" class="inline-block w-full">
+                    <button type="submit" class="w-full text-left text-white px-3 py-2 text-sm font-medium hover:bg-white/10 rounded">Logout</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4 mb-5">
+        <h2 class="mb-4"><i class="bi bi-search"></i> Search Receivers</h2>
+        
+        <div class="alert alert-info" role="alert">
+            <i class="bi bi-info-circle"></i> 
+            <strong>Purpose:</strong> Use this page to verify if a receiver contacting you is registered and verified in the system. 
+            Search by phone number to find a specific receiver, or view all verified receivers.
+        </div>
+
+        <!-- Search Form -->
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0"><i class="bi bi-funnel"></i> Search Filters</h5>
+            </div>
+            <div class="card-body">
+                <form th:action="@{/donor/search-receivers}" method="get">
+                    <div class="row">
+                        <div class="col-md-8 mb-3">
+                            <label for="phone" class="form-label">
+                                Phone Number
+                            </label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="phone" 
+                                   name="phone" 
+                                   th:value="${searchPhone}"
+                                   placeholder="Enter receiver's phone number (exact match)">
+                            <small class="form-text text-muted">Leave empty to view all verified receivers</small>
+                        </div>
+                        <div class="col-md-4 mb-3 d-flex align-items-end">
+                            <button type="submit" class="btn btn-danger btn-lg w-100">
+                                <i class="bi bi-search"></i> Search
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- No Match Message -->
+        <div th:if="${noMatch}" class="alert alert-warning alert-dismissible fade show">
+            <i class="bi bi-exclamation-triangle"></i> 
+            No receiver found with phone number <strong th:text="${searchPhone}"></strong>. 
+            Showing all verified receivers below.
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <!-- Results -->
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-people"></i> Verified Receivers 
+                    <span class="badge bg-light text-dark ms-2" 
+                          th:text="${#lists.size(receivers)} + ' receiver(s) found'"></span>
+                </h5>
+            </div>
+            <div class="card-body">
+                <div th:if="${#lists.isEmpty(receivers)}" class="alert alert-info text-center py-5">
+                    <i class="bi bi-info-circle display-4 d-block mb-3"></i>
+                    <p class="mb-0">No verified receivers found.</p>
+                </div>
+                
+                <div th:if="${!#lists.isEmpty(receivers)}">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-striped">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th style="width: 50px;">#</th>
+                                    <th>Name</th>
+                                    <th>Phone</th>
+                                    <th>Email</th>
+                                    <th>Address</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="receiver, iterStat : ${receivers}">
+                                    <td class="fw-bold text-primary" th:text="${iterStat.count}"></td>
+                                    <td>
+                                        <strong th:text="${receiver.fullName}"></strong>
+                                    </td>
+                                    <td>
+                                        <i class="bi bi-telephone"></i> 
+                                        <span th:text="${receiver.phone}"></span>
+                                    </td>
+                                    <td>
+                                        <i class="bi bi-envelope"></i> 
+                                        <span class="small" th:text="${receiver.email}"></span>
+                                    </td>
+                                    <td>
+                                        <span th:if="${receiverDetailsMap.containsKey(receiver.id)}" 
+                                              th:text="${receiverDetailsMap.get(receiver.id).composeAddress()}"></span>
+                                        <span th:if="${!receiverDetailsMap.containsKey(receiver.id)}" class="text-muted">Not Provided</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="mt-3 p-3 bg-light rounded">
+                        <small class="text-muted">
+                            <i class="bi bi-info-circle"></i> 
+                            <strong>Note:</strong> Only verified receivers (status: APPROVED) are shown. 
+                            Use the phone number search to verify if a contacting receiver is registered in the system.
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const donorBtn = document.getElementById('donor-menu-button');
+        const donorMenu = document.getElementById('donor-mobile-menu');
+        const donorMenuIcon = document.getElementById('donor-menu-icon');
+        const donorCloseIcon = document.getElementById('donor-close-icon');
+        if (donorBtn && donorMenu && donorMenuIcon && donorCloseIcon) {
+            donorBtn.addEventListener('click', () => {
+                donorMenu.classList.toggle('hidden');
+                donorMenuIcon.classList.toggle('hidden');
+                donorCloseIcon.classList.toggle('hidden');
+            });
+        }
+    </script>
+</body>
+
+</html>
+
