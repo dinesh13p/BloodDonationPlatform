@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head></head>
+
+<body>
+    <!-- Public Sidebar Fragment for Unauthenticated Pages -->
+    <div th:fragment="publicSidebar">
+        <!-- Fixed Sidebar (Desktop: visible, Mobile: hidden by default) -->
+        <aside id="public-sidebar"
+            class="fixed top-0 left-0 h-full w-72 bg-[#111111] z-50 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out flex flex-col">
+            <!-- Logo Section -->
+            <div class="p-6 border-b border-gray-800">
+                <a th:href="@{/}" class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center flex-shrink-0">
+                        <div class="w-5 h-5 bg-[#E94560] rounded-full"></div>
+                    </div>
+                    <div>
+                        <span class="text-white font-bold text-lg block">SABAIKO</span>
+                        <span class="text-gray-400 text-xs">Blood Bank</span>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Navigation Section -->
+            <nav class="flex-1 overflow-y-auto py-6 px-4">
+                <ul class="space-y-2">
+                    <!-- About -->
+                    <li>
+                        <a th:href="@{/about}"
+                            class="flex items-center px-4 py-3 rounded-lg transition-colors duration-200 text-gray-300 hover:bg-gray-800">
+                            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <span class="font-medium">About</span>
+                        </a>
+                    </li>
+
+                    <!-- Blog -->
+                    <li>
+                        <a th:href="@{/blog}"
+                            class="flex items-center px-4 py-3 rounded-lg transition-colors duration-200 text-gray-300 hover:bg-gray-800">
+                            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+                            </svg>
+                            <span class="font-medium">Blog</span>
+                        </a>
+                    </li>
+
+                    <!-- FAQ -->
+                    <li>
+                        <a th:href="@{/faq}"
+                            class="flex items-center px-4 py-3 rounded-lg transition-colors duration-200 text-gray-300 hover:bg-gray-800">
+                            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <span class="font-medium">FAQ</span>
+                        </a>
+                    </li>
+
+                    <!-- Login -->
+                    <li>
+                        <a th:href="@{/auth/login}"
+                            class="flex items-center px-4 py-3 rounded-lg transition-colors duration-200 text-gray-300 hover:bg-gray-800">
+                            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                            </svg>
+                            <span class="font-medium">Login</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <!-- Footer Section -->
+            <div class="p-6 border-t border-gray-800">
+                <p class="text-gray-500 text-xs text-center">© 2026 Sabaiko Blood Bank</p>
+            </div>
+        </aside>
+
+        <!-- Mobile Overlay -->
+        <div id="public-sidebar-overlay" class="fixed inset-0 bg-black/50 z-40 hidden lg:hidden"></div>
+
+        <!-- Hamburger Button (Mobile Only) -->
+        <button id="public-hamburger-btn"
+            class="fixed top-4 left-4 z-30 lg:hidden bg-[#E94560] text-white p-3 rounded-lg shadow-lg hover:bg-[#d63d52] transition-colors duration-200">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+        </button>
+    </div>
+
+    <!-- Sidebar Toggle Script Fragment -->
+    <script th:fragment="publicSidebarScript">
+        document.addEventListener('DOMContentLoaded', function () {
+            const sidebar = document.getElementById('public-sidebar');
+            const overlay = document.getElementById('public-sidebar-overlay');
+            const hamburger = document.getElementById('public-hamburger-btn');
+
+            function toggleSidebar() {
+                sidebar.classList.toggle('-translate-x-full');
+                overlay.classList.toggle('hidden');
+            }
+
+            if (hamburger) {
+                hamburger.addEventListener('click', toggleSidebar);
+            }
+
+            if (overlay) {
+                overlay.addEventListener('click', toggleSidebar);
+            }
+        });
+    </script>
+</body>
+
+</html>
