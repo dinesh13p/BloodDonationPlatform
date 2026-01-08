@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
     <meta charset="UTF-8">
@@ -22,16 +22,8 @@
             background-image: var(--gradient-hero);
         }
 
-        .bg-gradient-accent {
-            background-image: var(--gradient-accent);
-        }
-
         .text-muted-foreground {
             color: hsl(var(--muted-foreground));
-        }
-
-        .hover\:text-foreground:hover {
-            color: hsl(var(--foreground));
         }
 
         .bg-primary {
@@ -41,89 +33,96 @@
         .text-primary {
             color: hsl(var(--primary));
         }
-
-        .hover\:bg-black\/80:hover {
-            background-color: rgba(0, 0, 0, 0.8);
-        }
-
-        .container {
-            width: 100%;
-            margin: 0 auto;
-            padding: 0 2rem;
-            max-width: 1400px;
-        }
     </style>
 </head>
 
-<body class="min-h-screen bg-background text-foreground">
-    <!-- Hero Section -->
-    <section class="bg-gradient-hero text-white">
-        <div th:replace="~{layout/header :: header}"></div>
-        <div class="container py-16 grid gap-10 lg:grid-cols-[1.1fr,0.9fr] items-center">
-            <div class="space-y-6">
-                <p class="uppercase tracking-[0.2em] text-white/70 text-sm">About Us</p>
-                <h1 class="text-4xl md:text-5xl font-bold leading-tight">Built to connect donors and receivers faster</h1>
-                <p class="text-white/90 max-w-3xl">
-                    Sabaiko Blood Bank is a Nepal-first platform that shortens the time between a request
-                    and a life-saving donation. Every screen, alert, and workflow is designed to help verified donors
-                    and receivers reach each other safely, wherever they are.
-                </p>
-                <div class="flex flex-wrap gap-3">
-                    <a th:href="@{/auth/login}" class="inline-flex items-center bg-black hover:bg-black/80 text-white px-6 py-3 rounded-md font-semibold shadow-lg">
-                        Go to Dashboard
-                    </a>
+<body class="min-h-screen bg-gray-50">
+    <!-- Sidebar (authenticated users) or Public Sidebar (unauthenticated) -->
+    <div sec:authorize="isAuthenticated()" th:replace="~{fragments/sidebar :: sidebar}"></div>
+    <div sec:authorize="!isAuthenticated()" th:replace="~{fragments/public-sidebar :: publicSidebar}"></div>
+
+    <!-- Main Content -->
+    <div class="lg:ml-72">
+        <!-- Hero Section -->
+        <section class="bg-gradient-hero text-white relative overflow-hidden">
+            <div class="absolute inset-0">
+                <div class="absolute -top-10 -left-10 w-40 h-40 bg-white/10 rounded-full blur-xl"></div>
+                <div class="absolute top-20 right-20 w-32 h-32 bg-white/10 rounded-full blur-lg"></div>
+            </div>
+            <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+                <div class="space-y-6">
+                    <p class="uppercase tracking-[0.2em] text-white/70 text-sm">About Us</p>
+                    <h1 class="text-4xl md:text-5xl font-bold leading-tight max-w-3xl">Built to connect donors and
+                        receivers faster</h1>
+                    <p class="text-white/90 max-w-3xl text-lg">
+                        Sabaiko Blood Bank is a Nepal-first platform that shortens the time between a request
+                        and a life-saving donation. Every screen, alert, and workflow is designed to help verified
+                        donors
+                        and receivers reach each other safely, wherever they are.
+                    </p>
+                    <div class="flex flex-wrap gap-3 pt-4">
+                        <a th:href="@{/auth/login}"
+                            class="inline-flex items-center bg-white text-primary px-6 py-3 rounded-lg font-semibold shadow-lg hover:bg-white/90 transition-all duration-200">
+                            Go to Dashboard
+                        </a>
+                    </div>
                 </div>
             </div>
-            
-    </section>
+        </section>
 
-    <section class="container py-10"></section>
+        <!-- Mission / Vision Section -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+            <div class="grid gap-6 md:grid-cols-3">
+                <div
+                    class="bg-white rounded-xl border border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-200">
+                    <div class="p-6 space-y-3">
+                        <h3 class="flex items-center gap-2 text-xl font-semibold">
+                            <svg class="h-6 w-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                            </svg>
+                            Mission
+                        </h3>
+                        <p class="text-muted-foreground">
+                            Get blood where it is needed the fastest by connecting the closest donors.
+                        </p>
+                    </div>
+                </div>
 
-    <!-- Mission / Vision Section -->
-    <section class="container pb-16 grid gap-6 md:grid-cols-3">
-        <div class="bg-white rounded-lg border border-gray-200 shadow">
-            <div class="p-6 space-y-3">
-                <h3 class="flex items-center gap-2 text-xl font-semibold">
-                    <svg class="h-5 w-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                    </svg>
-                    Mission
-                </h3>
-                <p class="text-muted-foreground">
-                    Get blood where it is needed the fastest by contacting closest donors.
-                </p>
+                <div
+                    class="bg-white rounded-xl border border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-200">
+                    <div class="p-6 space-y-3">
+                        <h3 class="flex items-center gap-2 text-xl font-semibold">
+                            <svg class="h-6 w-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                            </svg>
+                            Safety First
+                        </h3>
+                        <p class="text-muted-foreground">
+                            Identity checks, availability status, and guided follow-ups keep every request accountable.
+                        </p>
+                    </div>
+                </div>
+
+                <div
+                    class="bg-white rounded-xl border border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-200">
+                    <div class="p-6 space-y-3">
+                        <h3 class="flex items-center gap-2 text-xl font-semibold">
+                            <svg class="h-6 w-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                            </svg>
+                            Community-Led
+                        </h3>
+                        <p class="text-muted-foreground">
+                            Built with Nepali donors, receivers, and coordinators to keep local needs at the center.
+                        </p>
+                    </div>
+                </div>
             </div>
-        </div>
-        <div class="bg-white rounded-lg border border-gray-200 shadow">
-            <div class="p-6 space-y-3">
-                <h3 class="flex items-center gap-2 text-xl font-semibold">
-                    <svg class="h-5 w-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                    </svg>
-                    Safety first
-                </h3>
-                <p class="text-muted-foreground">
-                    Identity checks, availability status, and guided follow-ups keep every request accountable.
-                </p>
-            </div>
-        </div>
-        <div class="bg-white rounded-lg border border-gray-200 shadow">
-            <div class="p-6 space-y-3">
-                <h3 class="flex items-center gap-2 text-xl font-semibold">
-                    <svg class="h-5 w-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                    </svg>
-                    Community-led
-                </h3>
-                <p class="text-muted-foreground">
-                    Built with Nepali donors, receivers, and coordinators to keep local needs at the center.
-                </p>
-            </div>
-        </div>
-    </section>
+        </section>
+    </div>
 
     <!-- Footer -->
     <div th:replace="~{layout/footer :: footer}"></div>

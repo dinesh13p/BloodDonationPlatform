@@ -16,16 +16,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping("/admin")
 @PreAuthorize("hasRole('ADMIN')")
 public class AdminController {
-    
+
     @Autowired
     private AdminService adminService;
-    
+
     @Autowired
     private DonorService donorService;
-    
+
     @Autowired
     private ReceiverService receiverService;
-    
+
     @GetMapping("/dashboard")
     public String showDashboard(Model model) {
         model.addAttribute("pendingDonors", adminService.getPendingDonors());
@@ -35,49 +35,41 @@ public class AdminController {
         model.addAttribute("restrictedUsers", adminService.getRestrictedUsers());
         return "admin/dashboard";
     }
-    
+
     @GetMapping("/pending")
     public String showPendingUsers(Model model) {
         model.addAttribute("pendingUsers", adminService.getPendingUsers());
         return "admin/pending-users";
     }
-    
+
     @GetMapping("/verified")
     public String showVerifiedUsers(Model model) {
         model.addAttribute("donors", donorService.getAllDonors());
         model.addAttribute("receivers", receiverService.getAllReceivers());
         return "admin/verified-users";
     }
-    
+
     @PostMapping("/approve")
     public String approveUser(@RequestParam("userId") Long userId) {
         adminService.approveUser(userId);
         return "redirect:/admin/pending";
     }
-    
+
     @PostMapping("/reject")
     public String rejectUser(@RequestParam("userId") Long userId) {
         adminService.rejectUser(userId);
         return "redirect:/admin/pending";
     }
-    
+
     @PostMapping("/restrict")
     public String restrictUser(@RequestParam("userId") Long userId) {
         adminService.restrictUser(userId);
         return "redirect:/admin/dashboard";
     }
-    
+
     @PostMapping("/delete")
     public String deleteUser(@RequestParam("userId") Long userId) {
         adminService.deleteUser(userId);
         return "redirect:/admin/dashboard";
     }
-    
-    @PostMapping("/add-star")
-    public String addStarToDonor(@RequestParam("donorId") Long donorId) {
-        adminService.addStarToDonor(donorId);
-        return "redirect:/admin/dashboard";
-    }
 }
-
-

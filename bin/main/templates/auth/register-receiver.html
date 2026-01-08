@@ -38,139 +38,135 @@
 </head>
 
 <body class="min-h-screen bg-gradient-hero overflow-auto relative">
+    <!-- Background decorations -->
     <div class="absolute inset-0 overflow-hidden">
         <div class="absolute -top-10 -left-10 w-40 h-40 bg-white/10 rounded-full blur-xl"></div>
         <div class="absolute top-20 right-20 w-32 h-32 bg-white/10 rounded-full blur-lg"></div>
         <div class="absolute bottom-40 left-20 w-24 h-24 bg-white/10 rounded-full blur-md"></div>
     </div>
 
-    <nav class="relative z-50 bg-transparent">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
-                <div class="flex items-center space-x-2">
-                    <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center">
-                        <div class="w-4 h-4 bg-primary rounded-full"></div>
+    <!-- Main Content -->
+    <div class="lg:ml-72 relative z-10 min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12">
+        <div class="w-full max-w-2xl">
+            <div class="bg-white rounded-2xl shadow-glow p-8">
+                <h2 class="text-3xl font-bold text-center mb-6">Register as Receiver</h2>
+
+                <div th:if="${error}" class="bg-red-50 border border-red-200 text-red-700 rounded-lg p-4 mb-6"
+                    th:text="${error}"></div>
+
+                <form th:action="@{/auth/register/receiver}" th:object="${registrationDTO}" method="post"
+                    class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="username" class="block text-sm font-medium mb-2">Username *</label>
+                            <input type="text" id="username" th:field="*{username}" required
+                                class="w-full h-12 px-4 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all" />
+                            <div th:if="${#fields.hasErrors('username')}" th:errors="*{username}"
+                                class="text-red-600 text-sm mt-1"></div>
+                        </div>
+
+                        <div>
+                            <label for="email" class="block text-sm font-medium mb-2">Email *</label>
+                            <input type="email" id="email" th:field="*{email}" required
+                                class="w-full h-12 px-4 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all" />
+                            <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}"
+                                class="text-red-600 text-sm mt-1"></div>
+                        </div>
                     </div>
-                    <span class="text-white font-bold text-xl">SABAIKO</span>
-                    <span class="text-white text-sm">Blood Bank</span>
-                </div>
-            </div>
-        </div>
-    </nav>
 
-    <div class="relative z-10 max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div class="bg-white rounded-2xl shadow-glow p-8">
-            <h2 class="text-3xl font-bold text-center mb-6">Register as Receiver</h2>
-
-            <div th:if="${error}" class="bg-red-50 border border-red-200 text-red-700 rounded-md p-4 mb-4"
-                th:text="${error}"></div>
-
-            <form th:action="@{/auth/register/receiver}" th:object="${registrationDTO}" method="post" class="space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label for="username" class="block text-sm font-medium mb-1">Username *</label>
-                        <input type="text" id="username" th:field="*{username}" required
-                            class="w-full h-12 px-3 border border-border rounded-md focus:ring-2 focus:ring-primary" />
-                        <div th:if="${#fields.hasErrors('username')}" th:errors="*{username}"
+                        <label for="password" class="block text-sm font-medium mb-2">Password *</label>
+                        <input type="password" id="password" th:field="*{password}" required
+                            class="w-full h-12 px-4 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all" />
+                        <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}"
                             class="text-red-600 text-sm mt-1"></div>
                     </div>
 
                     <div>
-                        <label for="email" class="block text-sm font-medium mb-1">Email *</label>
-                        <input type="email" id="email" th:field="*{email}" required
-                            class="w-full h-12 px-3 border border-border rounded-md focus:ring-2 focus:ring-primary" />
-                        <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}"
+                        <label for="fullName" class="block text-sm font-medium mb-2">Organization Name *</label>
+                        <input type="text" id="fullName" th:field="*{fullName}" required
+                            class="w-full h-12 px-4 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all" />
+                        <div th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}"
                             class="text-red-600 text-sm mt-1"></div>
                     </div>
-                </div>
 
-                <div>
-                    <label for="password" class="block text-sm font-medium mb-1">Password *</label>
-                    <input type="password" id="password" th:field="*{password}" required
-                        class="w-full h-12 px-3 border border-border rounded-md focus:ring-2 focus:ring-primary" />
-                    <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}"
-                        class="text-red-600 text-sm mt-1"></div>
-                </div>
-
-                <div>
-                    <label for="fullName" class="block text-sm font-medium mb-1">Organization Name *</label>
-                    <input type="text" id="fullName" th:field="*{fullName}" required
-                        class="w-full h-12 px-3 border border-border rounded-md focus:ring-2 focus:ring-primary" />
-                    <div th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}"
-                        class="text-red-600 text-sm mt-1"></div>
-                </div>
-
-                <div>
-                    <label for="phone" class="block text-sm font-medium mb-1">Phone *</label>
-                    <input type="text" id="phone" th:field="*{phone}" required
-                        class="w-full h-12 px-3 border border-border rounded-md focus:ring-2 focus:ring-primary" />
-                    <div th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}" class="text-red-600 text-sm mt-1">
-                    </div>
-                </div>
-
-                <div>
-                    <label for="pan" class="block text-sm font-medium mb-1">PAN *</label>
-                    <input type="text" id="pan" th:field="*{pan}" required
-                        class="w-full h-12 px-3 border border-border rounded-md focus:ring-2 focus:ring-primary" />
-                    <div th:if="${#fields.hasErrors('pan')}" th:errors="*{pan}" class="text-red-600 text-sm mt-1">
-                    </div>
-                </div>
-
-                <div class="space-y-2">
-                    <div class="flex items-center justify-between">
-                        <label class="block text-sm font-medium">Address Details *</label>
-                        <span class="text-xs text-gray-500">Province + District + Municipality + Ward</span>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label for="province" class="block text-sm font-medium mb-1">Province</label>
-                            <input type="text" id="province" th:field="*{province}"
-                                class="w-full h-12 px-3 border border-border rounded-md focus:ring-2 focus:ring-primary" />
-                        </div>
-                        <div>
-                            <label for="district" class="block text-sm font-medium mb-1">District</label>
-                            <input type="text" id="district" th:field="*{district}"
-                                class="w-full h-12 px-3 border border-border rounded-md focus:ring-2 focus:ring-primary" />
+                    <div>
+                        <label for="phone" class="block text-sm font-medium mb-2">Phone *</label>
+                        <input type="text" id="phone" th:field="*{phone}" required
+                            class="w-full h-12 px-4 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all" />
+                        <div th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"
+                            class="text-red-600 text-sm mt-1">
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label for="palika" class="block text-sm font-medium mb-1">Municipality</label>
-                            <input type="text" id="palika" th:field="*{palika}"
-                                class="w-full h-12 px-3 border border-border rounded-md focus:ring-2 focus:ring-primary" />
-                        </div>
-                        <div>
-                            <label for="wardNo" class="block text-sm font-medium mb-1">Ward No.</label>
-                            <input type="text" id="wardNo" th:field="*{wardNo}"
-                                class="w-full h-12 px-3 border border-border rounded-md focus:ring-2 focus:ring-primary" />
+                    <div>
+                        <label for="pan" class="block text-sm font-medium mb-2">PAN *</label>
+                        <input type="text" id="pan" th:field="*{pan}" required
+                            class="w-full h-12 px-4 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all" />
+                        <div th:if="${#fields.hasErrors('pan')}" th:errors="*{pan}" class="text-red-600 text-sm mt-1">
                         </div>
                     </div>
 
-                    <div class="bg-gray-50 border border-dashed border-border rounded-lg p-3">
-                        <input type="hidden" id="address" th:field="*{address}" required>
-                        <p class="text-sm text-gray-700">
-                            Full Address:
-                            <span id="addressPreview" class="font-semibold" th:text="*{address}">Not Provided</span>
-                        </p>
-                        <p class="text-xs text-gray-500">Address will be saved as a combination of the fields above.</p>
-                        <div th:if="${#fields.hasErrors('address')}" th:errors="*{address}"
-                             class="text-red-600 text-sm mt-1"></div>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <label class="block text-sm font-medium">Address Details *</label>
+                            <span class="text-xs text-gray-500">Province + District + Municipality + Ward</span>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="province" class="block text-sm font-medium mb-2">Province</label>
+                                <input type="text" id="province" th:field="*{province}"
+                                    class="w-full h-12 px-4 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all" />
+                            </div>
+                            <div>
+                                <label for="district" class="block text-sm font-medium mb-2">District</label>
+                                <input type="text" id="district" th:field="*{district}"
+                                    class="w-full h-12 px-4 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all" />
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="palika" class="block text-sm font-medium mb-2">Municipality</label>
+                                <input type="text" id="palika" th:field="*{palika}"
+                                    class="w-full h-12 px-4 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all" />
+                            </div>
+                            <div>
+                                <label for="wardNo" class="block text-sm font-medium mb-2">Ward No.</label>
+                                <input type="text" id="wardNo" th:field="*{wardNo}"
+                                    class="w-full h-12 px-4 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all" />
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-50 border border-dashed border-gray-300 rounded-lg p-4">
+                            <input type="hidden" id="address" th:field="*{address}" required>
+                            <p class="text-sm text-gray-700">
+                                Full Address:
+                                <span id="addressPreview" class="font-semibold" th:text="*{address}">Not Provided</span>
+                            </p>
+                            <p class="text-xs text-gray-500 mt-1">Address will be saved as a combination of the fields
+                                above.</p>
+                            <div th:if="${#fields.hasErrors('address')}" th:errors="*{address}"
+                                class="text-red-600 text-sm mt-1"></div>
+                        </div>
                     </div>
+
+                    <button type="submit"
+                        class="w-full h-12 bg-primary hover:bg-primary-dark text-white font-semibold rounded-lg shadow-lg transition-all duration-200 hover:shadow-xl">
+                        Register
+                    </button>
+                </form>
+
+                <div class="text-center mt-6">
+                    <p class="text-sm text-gray-600">Already have an account? <a th:href="@{/auth/login}"
+                            class="text-primary hover:underline font-medium">Login here</a></p>
                 </div>
-
-                <button type="submit"
-                    class="w-full h-12 bg-primary hover:bg-primary-dark text-white font-semibold rounded-md shadow-lg">Register</button>
-            </form>
-
-            <div class="text-center mt-4">
-                <p>Already have an account? <a th:href="@{/auth/login}"
-                        class="text-primary hover:underline font-medium">Login here</a></p>
             </div>
         </div>
     </div>
+
     <script>
-        const addressFields = ['province','district','palika','wardNo'];
+        const addressFields = ['province', 'district', 'palika', 'wardNo'];
         const preview = document.getElementById('addressPreview');
         const hiddenAddress = document.getElementById('address');
 
@@ -203,6 +199,13 @@
         });
         updateAddress();
     </script>
+
+
+    <!-- Public Sidebar (included after main content to avoid CSRF issues) -->
+    <div th:replace="~{fragments/public-sidebar :: publicSidebar}"></div>
+
+    <!-- Public Sidebar Script -->
+    <script th:replace="~{fragments/public-sidebar :: publicSidebarScript}"></script>
 </body>
 
 </html>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
     <meta charset="UTF-8">
@@ -10,82 +10,110 @@
         :root {
             --background: 0 0% 100%;
             --foreground: 222.2 84% 4.9%;
+            --primary: 348 83% 47%;
             --muted-foreground: 215.4 16.3% 46.9%;
             --border: 214.3 31.8% 91.4%;
+            --gradient-hero: linear-gradient(135deg, hsl(348 83% 47%) 0%, hsl(0 70% 60%) 50%, hsl(355 70% 65%) 100%);
+        }
+
+        .bg-gradient-hero {
+            background-image: var(--gradient-hero);
         }
 
         .text-muted-foreground {
             color: hsl(var(--muted-foreground));
         }
 
-        .hover\:text-foreground:hover {
-            color: hsl(var(--foreground));
+        .bg-primary {
+            background-color: hsl(var(--primary));
         }
 
-        .border-border {
-            border-color: hsl(var(--border));
-        }
-
-        .container {
-            width: 100%;
-            margin: 0 auto;
-            padding: 0 2rem;
-            max-width: 1400px;
+        .hover\:bg-primary:hover {
+            background-color: hsl(var(--primary));
         }
     </style>
 </head>
 
-<body class="min-h-screen bg-background text-foreground">
-    <section class="bg-gradient-to-br from-red-500 to-pink-500 text-white pb-12">
-        <div th:replace="~{layout/header :: header}"></div>
-        <div class="container pt-10">
-            <p class="uppercase tracking-[0.2em] text-white/80 text-sm">Insights</p>
-            <h1 class="text-4xl font-bold mb-3">Blog</h1>
-            <p class="text-white/90 max-w-2xl">Stories, updates, and tips about blood donation and the community that powers it.</p>
-        </div>
-    </section>
+<body class="min-h-screen bg-gray-50">
+    <!-- Sidebar (authenticated users) or Public Sidebar (unauthenticated) -->
+    <div sec:authorize="isAuthenticated()" th:replace="~{fragments/sidebar :: sidebar}"></div>
+    <div sec:authorize="!isAuthenticated()" th:replace="~{fragments/public-sidebar :: publicSidebar}"></div>
 
-    <section class="container py-12 -mt-12">
-        <div class="bg-white rounded-2xl shadow-xl border border-gray-200 p-6">
+    <!-- Main Content -->
+    <div class="lg:ml-72">
+        <!-- Hero Section -->
+        <section class="bg-gradient-hero text-white relative overflow-hidden">
+            <div class="absolute inset-0">
+                <div class="absolute -top-10 -left-10 w-40 h-40 bg-white/10 rounded-full blur-xl"></div>
+                <div class="absolute top-20 right-20 w-32 h-32 bg-white/10 rounded-full blur-lg"></div>
+            </div>
+            <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+                <p class="uppercase tracking-[0.2em] text-white/80 text-sm">Insights</p>
+                <h1 class="text-4xl font-bold mb-3 mt-2">Blog</h1>
+                <p class="text-white/90 max-w-2xl">Stories, updates, and tips about blood donation and the community
+                    that powers it.</p>
+            </div>
+        </section>
+
+        <!-- Blog Posts Section -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
             <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 <!-- Blog Post 1 -->
-                <div class="bg-white rounded-lg border border-gray-200 shadow-sm">
-                    <div class="p-6 space-y-3">
+                <div
+                    class="bg-white rounded-xl border border-gray-200 shadow-lg hover:shadow-xl transition-all duration-200">
+                    <div class="p-6 space-y-4">
                         <h3 class="text-xl font-semibold">Why Donate Blood?</h3>
-                        <p class="text-sm text-muted-foreground">Your single donation can save up to three lives.</p>
-                        <a href="#" class="inline-flex items-center gap-1 px-4 py-2 border border-border rounded-md hover:bg-gray-50 text-sm">
+                        <p class="text-sm text-muted-foreground">Your single donation can save up to three lives. Learn
+                            about the impact of regular blood donation.</p>
+                        <a href="#"
+                            class="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-lg hover:bg-primary/90 text-sm font-medium transition-all duration-200">
                             Read More
-                            <span aria-hidden="true">→</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 5l7 7-7 7" />
+                            </svg>
                         </a>
                     </div>
                 </div>
 
                 <!-- Blog Post 2 -->
-                <div class="bg-white rounded-lg border border-gray-200 shadow-sm">
-                    <div class="p-6 space-y-3">
+                <div
+                    class="bg-white rounded-xl border border-gray-200 shadow-lg hover:shadow-xl transition-all duration-200">
+                    <div class="p-6 space-y-4">
                         <h3 class="text-xl font-semibold">Preparing for Donation</h3>
-                        <p class="text-sm text-muted-foreground">Hydration, sleep, and a healthy meal make a difference.</p>
-                        <a href="#" class="inline-flex items-center gap-1 px-4 py-2 border border-border rounded-md hover:bg-gray-50 text-sm">
+                        <p class="text-sm text-muted-foreground">Hydration, sleep, and a healthy meal make a difference.
+                            Get ready for a successful donation.</p>
+                        <a href="#"
+                            class="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-lg hover:bg-primary/90 text-sm font-medium transition-all duration-200">
                             Read More
-                            <span aria-hidden="true">→</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 5l7 7-7 7" />
+                            </svg>
                         </a>
                     </div>
                 </div>
 
                 <!-- Blog Post 3 -->
-                <div class="bg-white rounded-lg border border-gray-200 shadow-sm">
-                    <div class="p-6 space-y-3">
+                <div
+                    class="bg-white rounded-xl border border-gray-200 shadow-lg hover:shadow-xl transition-all duration-200">
+                    <div class="p-6 space-y-4">
                         <h3 class="text-xl font-semibold">After Donation Care</h3>
-                        <p class="text-sm text-muted-foreground">What to do post-donation to recover quickly.</p>
-                        <a href="#" class="inline-flex items-center gap-1 px-4 py-2 border border-border rounded-md hover:bg-gray-50 text-sm">
+                        <p class="text-sm text-muted-foreground">What to do post-donation to recover quickly and
+                            maintain your health.</p>
+                        <a href="#"
+                            class="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-lg hover:bg-primary/90 text-sm font-medium transition-all duration-200">
                             Read More
-                            <span aria-hidden="true">→</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 5l7 7-7 7" />
+                            </svg>
                         </a>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
+    </div>
 
     <!-- Footer -->
     <div th:replace="~{layout/footer :: footer}"></div>

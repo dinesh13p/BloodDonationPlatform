@@ -41,15 +41,6 @@
                     <p class="mb-2"><strong class="text-gray-700">Blood Group:</strong> <span
                             class="text-primary font-bold text-lg"
                             th:text="${donorDetails.bloodGroup.displayName}"></span></p>
-                    <p class="mb-2">
-                        <strong class="text-gray-700">Stars:</strong>
-                        <span th:each="i : ${#numbers.sequence(1, donorDetails.stars)}">
-                            <svg class="inline-block w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 24 24">
-                                <path
-                                    d="M12 .587l3.668 7.431 8.2 1.193-5.934 5.788 1.402 8.162L12 18.896l-7.336 3.865 1.402-8.162L.132 9.211l8.2-1.193L12 .587z" />
-                            </svg>
-                        </span>
-                    </p>
                     <p>
                         <strong class="text-gray-700">Availability:</strong>
                         <span th:if="${donorDetails.availability}"

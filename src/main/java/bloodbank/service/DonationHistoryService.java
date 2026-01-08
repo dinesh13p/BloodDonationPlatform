@@ -12,13 +12,13 @@ import java.util.List;
 
 @Service
 public class DonationHistoryService {
-    
+
     @Autowired
     private DonationHistoryRepository donationHistoryRepository;
-    
+
     @Autowired
     private DonorService donorService;
-    
+
     public DonationHistory createDonationHistory(User donor, User receiver) {
         DonationHistory history = new DonationHistory();
         history.setDonor(donor);
@@ -26,33 +26,28 @@ public class DonationHistoryService {
         history.setDonationDate(LocalDateTime.now());
         return donationHistoryRepository.save(history);
     }
-    
+
     @Transactional
     public void verifyByReceiver(Long donationId) {
         DonationHistory history = donationHistoryRepository.findById(donationId)
-            .orElseThrow(() -> new RuntimeException("Donation history not found"));
+                .orElseThrow(() -> new RuntimeException("Donation history not found"));
         history.setVerifiedByReceiver(true);
         donationHistoryRepository.save(history);
     }
-    
+
     @Transactional
     public void verifyByAdmin(Long donationId) {
         DonationHistory history = donationHistoryRepository.findById(donationId)
-            .orElseThrow(() -> new RuntimeException("Donation history not found"));
+                .orElseThrow(() -> new RuntimeException("Donation history not found"));
         history.setVerifiedByAdmin(true);
         donationHistoryRepository.save(history);
-        
-        // Add star to donor
-        donorService.addStar(history.getDonor());
     }
-    
+
     public List<DonationHistory> getDonorHistory(User donor) {
         return donationHistoryRepository.findByDonor(donor);
     }
-    
+
     public List<DonationHistory> getReceiverHistory(User receiver) {
         return donationHistoryRepository.findByReceiver(receiver);
     }
 }
-
-

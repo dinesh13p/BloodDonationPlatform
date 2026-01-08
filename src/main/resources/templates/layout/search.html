@@ -38,8 +38,10 @@
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-10">
             <div class="max-w-3xl space-y-4">
                 <p class="uppercase tracking-[0.2em] text-white/80 text-sm">Find blood fast</p>
-                <h1 class="text-4xl md:text-5xl font-bold leading-tight">Search available donors by type and address</h1>
-                <p class="text-white/85 text-lg">Filter by blood type and precise address (province, district, municipality, ward) to reach verified available donors.</p>
+                <h1 class="text-4xl md:text-5xl font-bold leading-tight">Search available donors by type and address
+                </h1>
+                <p class="text-white/85 text-lg">Filter by blood type and precise address (province, district,
+                    municipality, ward) to reach verified available donors.</p>
             </div>
         </div>
     </section>
@@ -50,29 +52,40 @@
             <form th:action="@{/search}" method="get" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div>
                     <label class="block text-sm font-medium mb-1">Blood Group</label>
-                    <select name="bloodGroup" class="w-full h-12 px-3 border border-border rounded-md focus:ring-2 focus:ring-primary">
+                    <select name="bloodGroup"
+                        class="w-full h-12 px-3 border border-border rounded-md focus:ring-2 focus:ring-primary">
                         <option value="">All Blood Groups</option>
-                        <option th:each="bg : ${bloodGroups}" th:value="${bg.name()}" th:text="${bg.displayName}" th:selected="${selectedBloodGroup == bg.name()}"></option>
+                        <option th:each="bg : ${bloodGroups}" th:value="${bg.name()}" th:text="${bg.displayName}"
+                            th:selected="${selectedBloodGroup == bg.name()}"></option>
                     </select>
                 </div>
                 <div>
                     <label class="block text-sm font-medium mb-1">Province</label>
-                    <input type="text" name="province" th:value="${selectedProvince}" class="w-full h-12 px-3 border border-border rounded-md focus:ring-2 focus:ring-primary" placeholder="Province">
+                    <input type="text" name="province" th:value="${selectedProvince}"
+                        class="w-full h-12 px-3 border border-border rounded-md focus:ring-2 focus:ring-primary"
+                        placeholder="Province">
                 </div>
                 <div>
                     <label class="block text-sm font-medium mb-1">District</label>
-                    <input type="text" name="district" th:value="${selectedDistrict}" class="w-full h-12 px-3 border border-border rounded-md focus:ring-2 focus:ring-primary" placeholder="District">
+                    <input type="text" name="district" th:value="${selectedDistrict}"
+                        class="w-full h-12 px-3 border border-border rounded-md focus:ring-2 focus:ring-primary"
+                        placeholder="District">
                 </div>
                 <div>
                     <label class="block text-sm font-medium mb-1">Palika (Municipality)</label>
-                    <input type="text" name="palika" th:value="${selectedPalika}" class="w-full h-12 px-3 border border-border rounded-md focus:ring-2 focus:ring-primary" placeholder="Municipality">
+                    <input type="text" name="palika" th:value="${selectedPalika}"
+                        class="w-full h-12 px-3 border border-border rounded-md focus:ring-2 focus:ring-primary"
+                        placeholder="Municipality">
                 </div>
                 <div>
                     <label class="block text-sm font-medium mb-1">Ward No.</label>
-                    <input type="text" name="wardNo" th:value="${selectedWardNo}" class="w-full h-12 px-3 border border-border rounded-md focus:ring-2 focus:ring-primary" placeholder="Ward">
+                    <input type="text" name="wardNo" th:value="${selectedWardNo}"
+                        class="w-full h-12 px-3 border border-border rounded-md focus:ring-2 focus:ring-primary"
+                        placeholder="Ward">
                 </div>
                 <div class="flex items-end">
-                    <button type="submit" class="w-full h-12 bg-primary hover:bg-primary-dark text-white font-semibold rounded-md shadow">
+                    <button type="submit"
+                        class="w-full h-12 bg-primary hover:bg-primary-dark text-white font-semibold rounded-md shadow">
                         Search Blood
                     </button>
                 </div>
@@ -81,27 +94,32 @@
             <div class="mt-8 border-t border-gray-100 pt-6">
                 <div class="flex items-center justify-between mb-4">
                     <h2 class="text-xl font-semibold">Available Donors</h2>
-                    <span class="text-sm text-muted-foreground" th:text="${#lists.size(donors)} + ' found'">0 found</span>
+                    <span class="text-sm text-muted-foreground" th:text="${#lists.size(donors)} + ' found'">0
+                        found</span>
                 </div>
 
-                <div th:if="${#lists.isEmpty(donors)}" class="text-muted-foreground">No donors found matching your criteria.</div>
+                <div th:if="${#lists.isEmpty(donors)}" class="text-muted-foreground">No donors found matching your
+                    criteria.</div>
 
                 <div class="grid gap-4 md:grid-cols-2" th:if="${!#lists.isEmpty(donors)}">
-                    <div th:each="donor : ${donors}" class="bg-white border border-gray-200 rounded-lg shadow-sm p-5 flex flex-col gap-2">
+                    <div th:each="donor : ${donors}"
+                        class="bg-white border border-gray-200 rounded-lg shadow-sm p-5 flex flex-col gap-2">
                         <div class="flex items-center justify-between">
                             <div>
                                 <h3 class="text-lg font-semibold" th:text="${donor.user.fullName}">Name</h3>
                                 <p class="text-sm text-muted-foreground" th:text="${donor.user.email}">email</p>
                             </div>
                             <div class="flex items-center gap-2">
-                                <span class="px-3 py-1 rounded-full bg-red-50 text-red-700 text-sm font-semibold" th:text="${donor.bloodGroup.displayName}">A+</span>
-                                <span class="text-yellow-500" th:each="i : ${#numbers.sequence(1, donor.stars)}">★</span>
+                                <span class="px-3 py-1 rounded-full bg-red-50 text-red-700 text-sm font-semibold"
+                                    th:text="${donor.bloodGroup.displayName}">A+</span>
                             </div>
                         </div>
                         <div class="text-sm text-muted-foreground flex items-center gap-1">
                             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c1.657 0 3-1.343 3-3S13.657 5 12 5 9 6.343 9 8s1.343 3 3 3z"/>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.5 8c0 7-7.5 13-7.5 13S4.5 15 4.5 8a7.5 7.5 0 1115 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 11c1.657 0 3-1.343 3-3S13.657 5 12 5 9 6.343 9 8s1.343 3 3 3z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19.5 8c0 7-7.5 13-7.5 13S4.5 15 4.5 8a7.5 7.5 0 1115 0z" />
                             </svg>
                             <span th:text="${(donor.province ?: 'N/A') + ', ' + (donor.district ?: '')}"></span>
                         </div>
