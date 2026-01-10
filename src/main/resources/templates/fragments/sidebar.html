@@ -25,7 +25,6 @@
             <!-- Navigation Section -->
             <nav class="flex-1 overflow-y-auto py-6 px-4">
                 <ul class="space-y-2">
-                    <!-- ADMIN MENU -->
                     <li sec:authorize="hasRole('ADMIN')">
                         <a th:href="@{/admin/dashboard}"
                             th:classappend="${#strings.contains(requestURI, '/admin/dashboard')} ? 'bg-[#E94560] text-white' : 'text-gray-300 hover:bg-gray-800'"
@@ -60,7 +59,6 @@
                         </a>
                     </li>
 
-                    <!-- DONOR MENU -->
                     <li sec:authorize="hasRole('DONOR')">
                         <a th:href="@{/donor/dashboard}"
                             th:classappend="${#strings.contains(requestURI, '/donor/dashboard')} ? 'bg-[#E94560] text-white' : 'text-gray-300 hover:bg-gray-800'"
@@ -128,7 +126,6 @@
                         </a>
                     </li>
 
-                    <!-- RECEIVER MENU -->
                     <li sec:authorize="hasRole('RECEIVER')">
                         <a th:href="@{/receiver/dashboard}"
                             th:classappend="${#strings.contains(requestURI, '/receiver/dashboard')} ? 'bg-[#E94560] text-white' : 'text-gray-300 hover:bg-gray-800'"
@@ -163,7 +160,6 @@
                         </a>
                     </li>
 
-                    <!-- LOGOUT (All Roles) -->
                     <li>
                         <form th:action="@{/logout}" method="post" class="w-full">
                             <button type="submit"
@@ -172,7 +168,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                                 </svg>
-								<span class="font-medium text-red-600">Logout</span>
+                                <span class="font-medium text-red-600">Logout</span>
                             </button>
                         </form>
                     </li>

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="details" class="bg-white rounded-lg shadow-xl w-full max-w-4xl mx-auto overflow-hidden">
+    <!-- Header -->
+    <div class="px-6 py-4 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
+        <h3 class="text-lg font-semibold text-gray-900"
+            th:text="${user.role.name() == 'DONOR' ? 'Donor Details' : 'Receiver Details'}">
+            User Details
+        </h3>
+        <button onclick="closePendingDetailsModal()" class="text-gray-400 hover:text-gray-500 focus:outline-none">
+            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+        </button>
+    </div>
+
+    <!-- Content -->
+    <div class="p-6 max-h-[80vh] overflow-y-auto">
+        <!-- User Basic Info -->
+        <div class="mb-6">
+            <h4 class="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">Account Information</h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-50 p-4 rounded-lg">
+                <div>
+                    <span class="block text-xs text-gray-500">Full Name</span>
+                    <span class="block text-sm font-semibold text-gray-900" th:text="${user.fullName}">-</span>
+                </div>
+                <div>
+                    <span class="block text-xs text-gray-500">Email</span>
+                    <span class="block text-sm font-medium text-gray-900" th:text="${user.email}">-</span>
+                </div>
+                <div>
+                    <span class="block text-xs text-gray-500">Phone</span>
+                    <span class="block text-sm font-medium text-gray-900" th:text="${user.phone}">-</span>
+                </div>
+                <div>
+                    <span class="block text-xs text-gray-500">Username</span>
+                    <span class="block text-sm font-medium text-gray-900" th:text="${user.username}">-</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Donor Details -->
+        <div th:if="${donorDetails != null}" class="mb-6">
+            <h4 class="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">Donor Profile</h4>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Profile Image -->
+                <div class="col-span-1">
+                    <div class="aspect-w-1 aspect-h-1 bg-gray-200 rounded-lg overflow-hidden">
+                        <img th:if="${donorDetails.profileImage}" th:src="@{'/uploads/' + ${donorDetails.profileImage}}"
+                            alt="Profile" class="object-cover w-full h-full">
+                        <div th:unless="${donorDetails.profileImage}"
+                            class="flex items-center justify-center h-full text-gray-400">
+                            <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Details -->
+                <div class="col-span-1 md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <span class="block text-xs text-gray-500">Blood Group</span>
+                        <span
+                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800"
+                            th:text="${donorDetails.bloodGroup.displayName}">-</span>
+                    </div>
+                    <div>
+                        <span class="block text-xs text-gray-500">Date of Birth</span>
+                        <span class="block text-sm font-medium text-gray-900"
+                            th:text="${donorDetails.dateOfBirth}">-</span>
+                    </div>
+
+                    <div class="sm:col-span-2">
+                        <span class="block text-xs text-gray-500">Address</span>
+                        <span class="block text-sm font-medium text-gray-900"
+                            th:text="${donorDetails.composeAddress()}"></span>
+                    </div>
+
+                    <div class="sm:col-span-2">
+                        <span class="block text-xs text-gray-500">Availability</span>
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                            th:classappend="${donorDetails.availability} ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'"
+                            th:text="${donorDetails.availability ? 'Available' : 'Unavailable'}"></span>
+                    </div>
+
+                    <div class="sm:col-span-2">
+                        <span class="block text-xs text-gray-500">Medical History</span>
+                        <p class="text-sm text-gray-700 mt-1 p-3 bg-gray-50 rounded border border-gray-100"
+                            th:text="${donorDetails.medicalHistory ?: 'None provided'}"></p>
+                    </div>
+
+                    <div class="sm:col-span-2">
+                        <span class="block text-xs text-gray-500">Bio</span>
+                        <p class="text-sm text-gray-700 mt-1" th:text="${donorDetails.bio ?: 'No bio'}"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Receiver Details -->
+        <div th:if="${receiverDetails != null}" class="mb-6">
+            <h4 class="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">Receiver Information</h4>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Receiver Profile Image -->
+                <div class="col-span-1">
+                    <div class="aspect-w-1 aspect-h-1 bg-gray-200 rounded-lg overflow-hidden">
+                        <img th:if="${receiverDetails.profileImage}"
+                            th:src="@{'/uploads/' + ${receiverDetails.profileImage}}" alt="Profile"
+                            class="object-cover w-full h-full">
+                        <div th:unless="${receiverDetails.profileImage}"
+                            class="flex items-center justify-center h-full text-gray-400">
+                            <!-- Helper icon for organization/receiver -->
+                            <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
+                                </path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-span-1 md:col-span-2 grid grid-cols-1 gap-4">
+                    <div>
+                        <span class="block text-xs text-gray-500">Organization / PAN</span>
+                        <span class="block text-sm font-medium text-gray-900"
+                            th:text="${receiverDetails.pan ?: 'N/A'}"></span>
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <span class="block text-xs text-gray-500">Address</span>
+                        <span class="block text-sm font-medium text-gray-900"
+                            th:text="${receiverDetails.composeAddress()}"></span>
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <span class="block text-xs text-gray-500">Bio / Description</span>
+                        <p class="text-sm text-gray-700 mt-1 p-3 bg-gray-50 rounded border border-gray-100"
+                            th:text="${receiverDetails.bio ?: 'No description provided'}"></p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <div class="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end gap-3">
+            <button onclick="closePendingDetailsModal()"
+                class="px-4 py-2 bg-white border border-gray-300 rounded text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                Close
+            </button>
+        </div>
+    </div>
+
+</html>

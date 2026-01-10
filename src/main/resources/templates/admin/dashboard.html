@@ -50,7 +50,6 @@
     <div class="lg:ml-72 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <h2 class="text-3xl font-bold mb-6">Admin Dashboard</h2>
 
-        <!-- Statistics Cards -->
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
             <div class="bg-gradient-to-br from-red-500 to-red-600 text-white rounded-lg shadow-lg p-6">
                 <h5 class="text-sm font-medium mb-2 opacity-90">Pending Donors</h5>
@@ -70,9 +69,7 @@
             </div>
         </div>
 
-        <!-- Pending Users Tables -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <!-- Pending Donors -->
             <div class="bg-white rounded-lg shadow border border-gray-200">
                 <div class="px-6 py-4 border-b border-gray-200">
                     <h5 class="text-lg font-semibold">Pending Donors</h5>
@@ -92,6 +89,10 @@
                                 <td class="py-3 pr-4" th:text="${donor.fullName}"></td>
                                 <td class="py-3 pr-4" th:text="${donor.email}"></td>
                                 <td class="py-3 flex gap-2">
+                                    <button onclick="openPendingDetails(this)" th:data-userid="${donor.id}"
+                                        class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-3 py-1 rounded">
+                                        View Details
+                                    </button>
                                     <form th:action="@{/admin/approve}" method="post" class="inline">
                                         <input type="hidden" name="userId" th:value="${donor.id}">
                                         <button type="submit"
@@ -109,7 +110,6 @@
                 </div>
             </div>
 
-            <!-- Pending Receivers -->
             <div class="bg-white rounded-lg shadow border border-gray-200">
                 <div class="px-6 py-4 border-b border-gray-200">
                     <h5 class="text-lg font-semibold">Pending Receivers</h5>
@@ -130,6 +130,10 @@
                                 <td class="py-3 pr-4" th:text="${receiver.fullName}"></td>
                                 <td class="py-3 pr-4" th:text="${receiver.email}"></td>
                                 <td class="py-3 flex gap-2">
+                                    <button onclick="openPendingDetails(this)" th:data-userid="${receiver.id}"
+                                        class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-3 py-1 rounded">
+                                        View Details
+                                    </button>
                                     <form th:action="@{/admin/approve}" method="post" class="inline">
                                         <input type="hidden" name="userId" th:value="${receiver.id}">
                                         <button type="submit"
@@ -148,7 +152,6 @@
             </div>
         </div>
 
-        <!-- Restricted Users -->
         <div class="mt-8 bg-white rounded-lg shadow border border-gray-200">
             <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
                 <h5 class="text-lg font-semibold">Restricted Accounts</h5>
@@ -174,6 +177,13 @@
                                 <td class="py-3 pr-4" th:text="${user.email}"></td>
                                 <td class="py-3 pr-4" th:text="${user.role}"></td>
                                 <td class="py-3 text-right">
+                                    <form th:action="@{/admin/unrestrict}" method="post" class="inline">
+                                        <input type="hidden" name="userId" th:value="${user.id}">
+                                        <button type="submit"
+                                            class="bg-green-600 hover:bg-green-700 text-white text-xs font-semibold px-3 py-1 rounded">
+                                            Unrestrict
+                                        </button>
+                                    </form>
                                     <form th:action="@{/admin/delete}" method="post" class="inline"
                                         onsubmit="return confirm('Permanently remove this account?');">
                                         <input type="hidden" name="userId" th:value="${user.id}">
@@ -191,6 +201,56 @@
         </div>
     </div>
 
+    <!-- Details Modal -->
+    <div id="pendingDetailsModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title"
+        role="dialog" aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <!-- Overlay -->
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"
+                onclick="closePendingDetailsModal()"></div>
+
+            <!-- Modal Panel Container -->
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+            <div id="pendingDetailsContent"
+                class="inline-block align-bottom text-left overflow-hidden transform transition-all sm:my-8 sm:align-middle w-full max-w-4xl">
+                <!-- Content injected here via AJAX -->
+                <div class="bg-white p-6 rounded-lg shadow-xl">
+                    <p class="text-gray-500">Loading details...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        function openPendingDetails(button) {
+            const userId = button.getAttribute('data-userid');
+            const modal = document.getElementById('pendingDetailsModal');
+            const contentDiv = document.getElementById('pendingDetailsContent');
+
+            modal.classList.remove('hidden');
+
+            // Show loading state
+            contentDiv.innerHTML = '<div class="bg-white p-6 rounded-lg shadow-xl flex justify-center"><p class="text-gray-500">Loading details...</p></div>';
+
+            fetch(`/admin/pending-details/${userId}`)
+                .then(response => {
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    return response.text();
+                })
+                .then(html => {
+                    contentDiv.innerHTML = html;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    contentDiv.innerHTML = '<div class="bg-white p-6 rounded-lg shadow-xl"><p class="text-red-500">Error loading details. Please try again.</p></div>';
+                });
+        }
+
+        function closePendingDetailsModal() {
+            document.getElementById('pendingDetailsModal').classList.add('hidden');
+        }
+    </script>
 </body>
 
 </html>
