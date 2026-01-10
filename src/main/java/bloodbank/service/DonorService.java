@@ -22,18 +22,22 @@ public class DonorService {
     @Autowired
     private DonorDetailsRepository donorDetailsRepository;
 
-    public DonorDetails createDonorDetails(User user, BloodGroup bloodGroup, String address, String province,
-            String district, String palika, String wardNo, String bio) {
-        DonorDetails donorDetails = new DonorDetails();
-        donorDetails.setUser(user);
-        donorDetails.setBloodGroup(bloodGroup);
-        donorDetails.setAddress(address);
-        donorDetails.setProvince(province);
-        donorDetails.setDistrict(district);
-        donorDetails.setPalika(palika);
-        donorDetails.setWardNo(wardNo);
-        donorDetails.setBio(bio);
-        return donorDetailsRepository.save(donorDetails);
+    @Autowired
+    private FileUploadService fileUploadService;
+
+    public DonorDetails registerDonorDetails(User user, BloodGroup bloodGroup, String address, String province,
+            String district, String palika, String wardNo, String bio, String profileImage) {
+        DonorDetails details = new DonorDetails();
+        details.setUser(user);
+        details.setBloodGroup(bloodGroup);
+        details.setAddress(address);
+        details.setProvince(province);
+        details.setDistrict(district);
+        details.setPalika(palika);
+        details.setWardNo(wardNo);
+        details.setBio(bio);
+        details.setProfileImage(profileImage);
+        return donorDetailsRepository.save(details);
     }
 
     public Optional<DonorDetails> findByUser(User user) {
@@ -105,10 +109,19 @@ public class DonorService {
 
     @Transactional
     public void updateProfileImage(User user, String imagePath) {
-        DonorDetails donorDetails = donorDetailsRepository.findByUser(user)
+        DonorDetails details = donorDetailsRepository.findByUser(user)
                 .orElseThrow(() -> new RuntimeException("Donor details not found"));
-        donorDetails.setProfileImage(imagePath);
-        donorDetailsRepository.save(donorDetails);
+
+        if (details.getProfileImage() != null && !details.getProfileImage().isBlank()) {
+            try {
+                fileUploadService.deleteFile(details.getProfileImage());
+            } catch (Exception e) {
+                // Log warning
+            }
+        }
+
+        details.setProfileImage(imagePath);
+        donorDetailsRepository.save(details);
     }
 
     public List<DonorDetails> getAllDonors() {

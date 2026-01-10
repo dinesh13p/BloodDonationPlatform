@@ -10,7 +10,10 @@ import java.util.List;
 @Repository
 public interface DonationHistoryRepository extends JpaRepository<DonationHistory, Long> {
     List<DonationHistory> findByDonor(User donor);
+
     List<DonationHistory> findByReceiver(User receiver);
+
+    void deleteByDonor(User donor);
+
+    void deleteByReceiver(User receiver);
 }
-
-

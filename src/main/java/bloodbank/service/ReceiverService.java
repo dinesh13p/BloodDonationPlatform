@@ -1,7 +1,6 @@
 package bloodbank.service;
 
 import bloodbank.dto.ReceiverUpdateDTO;
-import bloodbank.entity.BloodGroup;
 import bloodbank.entity.ReceiverDetails;
 import bloodbank.entity.User;
 import bloodbank.repository.ReceiverDetailsRepository;
@@ -18,18 +17,22 @@ public class ReceiverService {
     @Autowired
     private ReceiverDetailsRepository receiverDetailsRepository;
 
-    public ReceiverDetails createReceiverDetails(User user, String pan, String address, String province,
-            String district, String palika, String wardNo, String bio) {
-        ReceiverDetails receiverDetails = new ReceiverDetails();
-        receiverDetails.setUser(user);
-        receiverDetails.setPan(pan);
-        receiverDetails.setAddress(address);
-        receiverDetails.setProvince(province);
-        receiverDetails.setDistrict(district);
-        receiverDetails.setPalika(palika);
-        receiverDetails.setWardNo(wardNo);
-        receiverDetails.setBio(bio);
-        return receiverDetailsRepository.save(receiverDetails);
+    @Autowired
+    private FileUploadService fileUploadService;
+
+    public ReceiverDetails registerReceiverDetails(User user, String pan, String address, String province,
+            String district, String palika, String wardNo, String bio, String profileImage) {
+        ReceiverDetails details = new ReceiverDetails();
+        details.setUser(user);
+        details.setPan(pan);
+        details.setAddress(address);
+        details.setProvince(province);
+        details.setDistrict(district);
+        details.setPalika(palika);
+        details.setWardNo(wardNo);
+        details.setBio(bio);
+        details.setProfileImage(profileImage);
+        return receiverDetailsRepository.save(details);
     }
 
     public Optional<ReceiverDetails> findByUser(User user) {
@@ -38,17 +41,34 @@ public class ReceiverService {
 
     @Transactional
     public void verifyReceiver(User user) {
-        ReceiverDetails receiverDetails = receiverDetailsRepository.findByUser(user)
+        ReceiverDetails details = receiverDetailsRepository.findByUser(user)
                 .orElseThrow(() -> new RuntimeException("Receiver details not found"));
-        receiverDetails.setVerified(true);
-        receiverDetailsRepository.save(receiverDetails);
+        details.setVerified(true);
+        receiverDetailsRepository.save(details);
+    }
+
+    @Transactional
+    public void updateProfileImage(User user, String imagePath) {
+        ReceiverDetails details = receiverDetailsRepository.findByUser(user)
+                .orElseThrow(() -> new RuntimeException("Receiver details not found"));
+
+        if (details.getProfileImage() != null && !details.getProfileImage().isBlank()) {
+            try {
+                fileUploadService.deleteFile(details.getProfileImage());
+            } catch (Exception e) {
+                // Log warning
+            }
+        }
+
+        details.setProfileImage(imagePath);
+        receiverDetailsRepository.save(details);
     }
 
     public List<ReceiverDetails> getAllReceivers() {
         return receiverDetailsRepository.findAll()
-            .stream()
-            .filter(r -> r.getUser() != null && r.getUser().getStatus() == bloodbank.entity.UserStatus.APPROVED)
-            .toList();
+                .stream()
+                .filter(r -> r.getUser() != null && r.getUser().getStatus() == bloodbank.entity.UserStatus.APPROVED)
+                .toList();
     }
 
     @Transactional

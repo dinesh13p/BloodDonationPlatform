@@ -170,28 +170,32 @@ public class DonorDetails {
      * Format: "Province, District, Palika - Ward X"
      */
     public String composeAddress() {
-        StringBuilder builder = new StringBuilder();
-        if (province != null && !province.isBlank()) {
-            builder.append(province.trim());
-        }
+        StringBuilder sb = new StringBuilder();
+        if (province != null && !province.isBlank())
+            sb.append(province.trim());
+
         if (district != null && !district.isBlank()) {
-            if (builder.length() > 0)
-                builder.append(", ");
-            builder.append(district.trim());
+            if (sb.length() > 0)
+                sb.append(", ");
+            sb.append(district.trim());
         }
+
         if (palika != null && !palika.isBlank()) {
-            if (builder.length() > 0)
-                builder.append(", ");
-            builder.append(palika.trim());
+            if (sb.length() > 0)
+                sb.append(", ");
+            sb.append(palika.trim());
         }
+
         if (wardNo != null && !wardNo.isBlank()) {
-            if (builder.length() > 0)
-                builder.append(" - ");
-            builder.append("Ward ").append(wardNo.trim());
+            if (sb.length() > 0)
+                sb.append(" - ");
+            sb.append("Ward ").append(wardNo.trim());
         }
-        if (builder.length() == 0 && address != null && !address.isBlank()) {
-            builder.append(address.trim());
+
+        if (sb.length() == 0 && address != null && !address.isBlank()) {
+            sb.append(address.trim());
         }
-        return builder.length() == 0 ? "Not Provided" : builder.toString();
+
+        return sb.length() == 0 ? "Not Provided" : sb.toString();
     }
 }

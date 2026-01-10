@@ -15,10 +15,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.List;
@@ -44,97 +44,105 @@ public class DonorController {
 
     private User getCurrentUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String username = auth.getName();
-        return userService.findByUsername(username)
+        return userService.findByUsername(auth.getName())
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
     @GetMapping("/dashboard")
-    public String showDashboard() {
+    public String donorDashboard() {
         return "donor/donor-dashboard";
     }
 
     @GetMapping("/profile")
-    public String showProfile(Model model) {
+    public String profilePage(Model model) {
         User user = getCurrentUser();
-        Optional<DonorDetails> donorDetails = donorService.findByUser(user);
+        Optional<DonorDetails> details = donorService.findByUser(user);
 
         model.addAttribute("user", user);
-        model.addAttribute("donorDetails", donorDetails.orElse(null));
+        model.addAttribute("donorDetails", details.orElse(null));
         return "donor/donor-profile";
     }
 
     @GetMapping("/edit")
-    public String showEditForm(Model model) {
+    public String editProfileForm(Model model) {
         User user = getCurrentUser();
         Optional<DonorDetails> donorDetails = donorService.findByUser(user);
 
+        DonorUpdateDTO updateDTO = new DonorUpdateDTO();
+        if (donorDetails.isPresent()) {
+            DonorDetails d = donorDetails.get();
+            updateDTO.setBloodGroup(d.getBloodGroup());
+            updateDTO.setAddress(d.getAddress());
+            updateDTO.setProvince(d.getProvince());
+            updateDTO.setDistrict(d.getDistrict());
+            updateDTO.setPalika(d.getPalika());
+            updateDTO.setWardNo(d.getWardNo());
+            updateDTO.setAvailability(d.getAvailability());
+            updateDTO.setMedicalHistory(d.getMedicalHistory());
+            updateDTO.setDateOfBirth(d.getDateOfBirth());
+            updateDTO.setBio(d.getBio());
+        }
+
         model.addAttribute("user", user);
         model.addAttribute("donorDetails", donorDetails.orElse(null));
-        model.addAttribute("updateDTO", new DonorUpdateDTO());
+        model.addAttribute("updateDTO", updateDTO);
         return "donor/edit-donor";
     }
 
     @PostMapping("/update")
-    public String updateProfile(@RequestParam(required = false) String address,
-            @RequestParam(required = false) String province,
-            @RequestParam(required = false) String district,
-            @RequestParam(required = false) String palika,
-            @RequestParam(required = false) String wardNo,
-            @RequestParam(required = false) Boolean availability,
-            @RequestParam(required = false) String medicalHistory,
-            @RequestParam(required = false) String dateOfBirth,
-            @RequestParam(required = false) MultipartFile profileImage,
-            @RequestParam(required = false) String bio) {
+    public String processProfileUpdate(@ModelAttribute DonorUpdateDTO updateDTO) {
         User user = getCurrentUser();
 
-        if (profileImage != null && !profileImage.isEmpty()) {
+        if (updateDTO.getProfileImage() != null && !updateDTO.getProfileImage().isEmpty()) {
             try {
-                String imagePath = fileUploadService.uploadFile(profileImage, "profiles");
-                donorService.updateProfileImage(user, imagePath);
+                String path = fileUploadService.uploadFile(updateDTO.getProfileImage(), "profiles");
+                donorService.updateProfileImage(user, path);
             } catch (Exception e) {
-                // Handle error
+                e.printStackTrace(); // In real app, log this properly
             }
         }
 
-        DonorUpdateDTO updateDTO = new DonorUpdateDTO();
-        updateDTO.setAddress(composeAddress(province, district, palika, wardNo, address));
-        updateDTO.setProvince(province);
-        updateDTO.setDistrict(district);
-        updateDTO.setPalika(palika);
-        updateDTO.setWardNo(wardNo);
-        updateDTO.setAvailability(availability);
-        updateDTO.setMedicalHistory(medicalHistory);
-        if (dateOfBirth != null && !dateOfBirth.isEmpty()) {
-            updateDTO.setDateOfBirth(java.time.LocalDate.parse(dateOfBirth));
+        if (updateDTO.getAddress() == null || updateDTO.getAddress().isBlank()) {
+            updateDTO.setAddress(formatAddress(
+                    updateDTO.getProvince(),
+                    updateDTO.getDistrict(),
+                    updateDTO.getPalika(),
+                    updateDTO.getWardNo(),
+                    null));
         }
-        updateDTO.setBio(bio);
 
         donorService.updateDonorDetails(user, updateDTO);
-        return "redirect:/donor/profile";
+        return "redirect:/donor/profile?success=true";
     }
 
-    private String composeAddress(String province, String district, String palika, String wardNo, String fallbackAddress) {
-        StringBuilder builder = new StringBuilder();
-        if (province != null && !province.isBlank()) {
-            builder.append(province.trim());
-        }
+    private String formatAddress(String province, String district, String palika, String wardNo, String fallback) {
+        StringBuilder sb = new StringBuilder();
+        if (province != null && !province.isBlank())
+            sb.append(province.trim());
+
         if (district != null && !district.isBlank()) {
-            if (builder.length() > 0) builder.append(", ");
-            builder.append(district.trim());
+            if (sb.length() > 0)
+                sb.append(", ");
+            sb.append(district.trim());
         }
+
         if (palika != null && !palika.isBlank()) {
-            if (builder.length() > 0) builder.append(", ");
-            builder.append(palika.trim());
+            if (sb.length() > 0)
+                sb.append(", ");
+            sb.append(palika.trim());
         }
+
         if (wardNo != null && !wardNo.isBlank()) {
-            if (builder.length() > 0) builder.append(" - ");
-            builder.append("Ward ").append(wardNo.trim());
+            if (sb.length() > 0)
+                sb.append(" - ");
+            sb.append("Ward ").append(wardNo.trim());
         }
-        if (builder.length() == 0 && fallbackAddress != null && !fallbackAddress.isBlank()) {
-            builder.append(fallbackAddress.trim());
+
+        if (sb.length() == 0 && fallback != null && !fallback.isBlank()) {
+            sb.append(fallback.trim());
         }
-        return builder.length() == 0 ? "Not Provided" : builder.toString();
+
+        return sb.length() == 0 ? "Not Provided" : sb.toString();
     }
 
     @GetMapping("/search")
@@ -142,19 +150,17 @@ public class DonorController {
             @RequestParam(required = false) String type,
             @RequestParam(required = false) String address,
             Model model) {
+
         List<User> users = java.util.Collections.emptyList();
 
         if (query != null && !query.isEmpty()) {
             if ("username".equals(type)) {
                 users = userService.searchByUsername(query);
-            } else if ("fullname".equals(type)) { // Organization name is effectively Full Name for receivers or we can
-                                                  // search generic
+            } else if ("fullname".equals(type)) {
                 users = userService.searchByFullName(query);
             }
-        } else if (address != null && !address.isEmpty()) {
-            // For simplicity, searching users by address string match in future updates
-            // currently falling back to generic user search
         }
+        // Future: implement address search logic here
 
         model.addAttribute("users", users);
         model.addAttribute("query", query);
@@ -165,26 +171,23 @@ public class DonorController {
     @GetMapping("/search-receivers")
     public String searchReceivers(@RequestParam(value = "phone", required = false) String phone, Model model) {
         List<User> receivers = userService.findVerifiedReceivers(Optional.ofNullable(phone));
-        
-        // Create a map of User ID to ReceiverDetails for easy lookup in template
-        Map<Long, ReceiverDetails> receiverDetailsMap = new HashMap<>();
-        for (User receiver : receivers) {
-            receiverService.findByUser(receiver).ifPresent(details -> 
-                receiverDetailsMap.put(receiver.getId(), details)
-            );
+        Map<Long, ReceiverDetails> detailsMap = new HashMap<>();
+
+        for (User r : receivers) {
+            receiverService.findByUser(r).ifPresent(d -> detailsMap.put(r.getId(), d));
         }
-        
+
         model.addAttribute("receivers", receivers);
-        model.addAttribute("receiverDetailsMap", receiverDetailsMap);
+        model.addAttribute("receiverDetailsMap", detailsMap);
         model.addAttribute("searchPhone", phone);
         model.addAttribute("hasSearchPhone", phone != null && !phone.isBlank());
         model.addAttribute("noMatch", phone != null && !phone.isBlank() && receivers.isEmpty());
-        
+
         return "donor/search-receivers";
     }
 
     @PostMapping("/delete")
-    public String deleteAccount() {
+    public String deleteDonorAccount() {
         User user = getCurrentUser();
         userService.deleteUser(user.getId());
         SecurityContextHolder.clearContext();

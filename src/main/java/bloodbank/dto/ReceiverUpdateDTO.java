@@ -1,5 +1,7 @@
 package bloodbank.dto;
 
+import org.springframework.web.multipart.MultipartFile;
+
 public class ReceiverUpdateDTO {
     private String address;
     private String province;
@@ -7,6 +9,8 @@ public class ReceiverUpdateDTO {
     private String palika;
     private String wardNo;
     private String bio;
+
+    private MultipartFile profileImage;
 
     // Getters and Setters
     public String getAddress() {
@@ -55,5 +59,13 @@ public class ReceiverUpdateDTO {
 
     public void setBio(String bio) {
         this.bio = bio;
+    }
+
+    public MultipartFile getProfileImage() {
+        return profileImage;
+    }
+
+    public void setProfileImage(MultipartFile profileImage) {
+        this.profileImage = profileImage;
     }
 }

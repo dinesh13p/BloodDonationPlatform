@@ -38,7 +38,7 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
 
         if (user.getStatus() == UserStatus.PENDING || user.getStatus() == UserStatus.RESTRICTED) {
-            throw new UsernameNotFoundException("User account is not approved");
+            throw new UsernameNotFoundException("Account not active: " + user.getStatus());
         }
 
         return org.springframework.security.core.userdetails.User.builder()
@@ -48,7 +48,7 @@ public class UserService implements UserDetailsService {
                 .build();
     }
 
-    public User createUser(User user) {
+    public User registerUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
@@ -78,7 +78,7 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    public void updateUserStatus(Long userId, UserStatus status) {
+    public void changeUserStatus(Long userId, UserStatus status) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         user.setStatus(status);
@@ -88,7 +88,6 @@ public class UserService implements UserDetailsService {
     @Transactional
     public void deleteUser(Long userId) {
         userRepository.findById(userId).ifPresent(user -> {
-            // remove related details first to avoid FK issues
             if (user.getRole() == UserRole.DONOR) {
                 donorDetailsRepository.findByUser(user).ifPresent(donorDetailsRepository::delete);
             } else if (user.getRole() == UserRole.RECEIVER) {
@@ -118,10 +117,9 @@ public class UserService implements UserDetailsService {
     public List<User> findVerifiedReceivers(Optional<String> phone) {
         if (phone.isPresent() && !phone.get().isBlank()) {
             return userRepository.findByPhoneAndRoleAndStatus(
-                    phone.get().trim(), 
-                    UserRole.RECEIVER, 
-                    UserStatus.APPROVED
-            ).map(List::of).orElse(List.of());
+                    phone.get().trim(),
+                    UserRole.RECEIVER,
+                    UserStatus.APPROVED).map(List::of).orElse(List.of());
         } else {
             return userRepository.findByRoleAndStatus(UserRole.RECEIVER, UserStatus.APPROVED);
         }

@@ -18,9 +18,6 @@ public class AdminService {
     private UserService userService;
 
     @Autowired
-    private DonorService donorService;
-
-    @Autowired
     private ReceiverService receiverService;
 
     @Autowired
@@ -44,13 +41,10 @@ public class AdminService {
 
     @Transactional
     public void approveUser(Long userId) {
-        userService.updateUserStatus(userId, UserStatus.APPROVED);
-        User user = userService.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        if (user.getRole() == UserRole.RECEIVER) {
-            receiverService.verifyReceiver(user);
-        }
+        userService.changeUserStatus(userId, UserStatus.APPROVED);
+        userService.findById(userId)
+                .filter(u -> u.getRole() == UserRole.RECEIVER)
+                .ifPresent(receiverService::verifyReceiver);
     }
 
     @Transactional
@@ -60,12 +54,23 @@ public class AdminService {
 
     @Transactional
     public void deleteUser(Long userId) {
+        User user = userService.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        donationHistoryRepository.deleteByDonor(user);
+        donationHistoryRepository.deleteByReceiver(user);
+
         userService.deleteUser(userId);
     }
 
     @Transactional
     public void restrictUser(Long userId) {
-        userService.updateUserStatus(userId, UserStatus.RESTRICTED);
+        userService.changeUserStatus(userId, UserStatus.RESTRICTED);
+    }
+
+    @Transactional
+    public void unrestrictUser(Long userId) {
+        userService.changeUserStatus(userId, UserStatus.APPROVED);
     }
 
     public List<User> getAllDonors() {
@@ -78,5 +83,20 @@ public class AdminService {
 
     public List<DonationHistory> getAllDonationHistory() {
         return donationHistoryRepository.findAll();
+    }
+
+    public User getPendingUser(Long userId) {
+        User user = userService.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (user.getStatus() != UserStatus.PENDING) {
+            throw new RuntimeException("User is not in PENDING status");
+        }
+        return user;
+    }
+
+    public User getUser(Long userId) {
+        return userService.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
     }
 }

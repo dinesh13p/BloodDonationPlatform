@@ -8,8 +8,11 @@ import bloodbank.entity.User;
 import bloodbank.service.DonorService;
 import bloodbank.service.DonationHistoryService;
 import bloodbank.service.ReceiverService;
+import bloodbank.service.FileUploadService;
 import bloodbank.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import java.util.Collections;
+import java.util.ArrayList;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -41,61 +44,62 @@ public class ReceiverController {
     @Autowired
     private DonationHistoryService donationHistoryService;
 
+    @Autowired
+    private FileUploadService fileUploadService;
+
     private User getCurrentUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String username = auth.getName();
-        return userService.findByUsername(username)
+        return userService.findByUsername(auth.getName())
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
     @GetMapping("/dashboard")
-    public String showDashboard() {
+    public String receiverDashboard() {
         return "receiver/receiver-dashboard";
     }
 
     @GetMapping("/profile")
-    public String showProfile(Model model) {
+    public String profilePage(Model model) {
         User user = getCurrentUser();
-        Optional<ReceiverDetails> receiverDetails = receiverService.findByUser(user);
+        Optional<ReceiverDetails> details = receiverService.findByUser(user);
 
         model.addAttribute("user", user);
-        model.addAttribute("receiverDetails", receiverDetails.orElse(null));
+        model.addAttribute("receiverDetails", details.orElse(null));
         return "receiver/receiver-profile";
     }
 
     @GetMapping("/search")
     public String searchDonors(@RequestParam(value = "bloodGroup", required = false) String bloodGroup,
             Model model) {
-        List<DonorDetails> donors = new java.util.ArrayList<>();
-        String errorMessage = null;
-        
-        // Get current receiver's details for proximity calculation
+        List<DonorDetails> donors = new ArrayList<>();
+        String error = null;
+
         User currentUser = getCurrentUser();
-        Optional<ReceiverDetails> receiverDetailsOpt = receiverService.findByUser(currentUser);
-        ReceiverDetails receiverDetails = receiverDetailsOpt.orElse(null);
-        
-        // Blood group is required for search
+        ReceiverDetails receiverDetails = receiverService.findByUser(currentUser).orElse(null);
+
         if (bloodGroup != null && !bloodGroup.isEmpty()) {
             try {
                 BloodGroup bg = BloodGroup.valueOf(bloodGroup);
-                // Use proximity-based sorting
                 donors = donorService.findDonorsByBloodGroupSortedByProximity(bg, receiverDetails);
             } catch (IllegalArgumentException e) {
-                errorMessage = "Invalid blood group selected.";
+                error = "Invalid blood group selected.";
             }
         }
-        
-        // Add receiver address info for display
+
         if (receiverDetails != null) {
             model.addAttribute("receiverAddress", receiverDetails.composeAddress());
         }
-        
+
         model.addAttribute("donors", donors);
         model.addAttribute("bloodGroups", BloodGroup.values());
         model.addAttribute("selectedBloodGroup", bloodGroup);
-        model.addAttribute("errorMessage", errorMessage);
-        model.addAttribute("hasReceiverAddress", receiverDetails != null && 
-            receiverDetails.getProvince() != null && !receiverDetails.getProvince().isBlank());
+        model.addAttribute("errorMessage", error);
+
+        boolean hasAddress = receiverDetails != null &&
+                receiverDetails.getProvince() != null &&
+                !receiverDetails.getProvince().isBlank();
+        model.addAttribute("hasReceiverAddress", hasAddress);
+
         return "receiver/search-donor";
     }
 
@@ -106,49 +110,67 @@ public class ReceiverController {
                 .orElseThrow(() -> new RuntimeException("Donor not found"));
 
         donationHistoryService.createDonationHistory(donor, receiver);
-        donationHistoryService.verifyByReceiver(
-                donationHistoryService.getReceiverHistory(receiver).get(0).getId());
+        // Verify immediately
+        Long historyId = donationHistoryService.getReceiverHistory(receiver).get(0).getId();
+        donationHistoryService.verifyByReceiver(historyId);
 
         return "redirect:/receiver/search?verified=true";
     }
 
     @GetMapping("/edit")
-    public String showEditForm(Model model) {
+    public String editProfileForm(Model model) {
         User user = getCurrentUser();
         Optional<ReceiverDetails> receiverDetails = receiverService.findByUser(user);
 
+        ReceiverUpdateDTO updateDTO = new ReceiverUpdateDTO();
+        if (receiverDetails.isPresent()) {
+            ReceiverDetails d = receiverDetails.get();
+            updateDTO.setAddress(d.getAddress());
+            updateDTO.setProvince(d.getProvince());
+            updateDTO.setDistrict(d.getDistrict());
+            updateDTO.setPalika(d.getPalika());
+            updateDTO.setWardNo(d.getWardNo());
+            updateDTO.setBio(d.getBio());
+        }
+
         model.addAttribute("user", user);
         model.addAttribute("receiverDetails", receiverDetails.orElse(null));
-        model.addAttribute("updateDTO", new ReceiverUpdateDTO());
+        model.addAttribute("updateDTO", updateDTO);
         return "receiver/edit-receiver";
     }
 
     @PostMapping("/update")
-    public String updateProfile(@ModelAttribute ReceiverUpdateDTO updateDTO,
-            @RequestParam(required = false) org.springframework.web.multipart.MultipartFile profileImage,
-            @RequestParam(required = false) String province,
-            @RequestParam(required = false) String district,
-            @RequestParam(required = false) String palika,
-            @RequestParam(required = false) String wardNo) {
+    public String submitProfileUpdate(@ModelAttribute ReceiverUpdateDTO updateDTO) {
         User user = getCurrentUser();
 
-        // Handle profile image if needed, for now just update details
-        // Note: FileUploadService would be needed here if image upload is supported for
-        // Receiver
-        updateDTO.setProvince(province);
-        updateDTO.setDistrict(district);
-        updateDTO.setPalika(palika);
-        updateDTO.setWardNo(wardNo);
-        updateDTO.setAddress(composeAddress(province, district, palika, wardNo, updateDTO.getAddress()));
+        if (updateDTO.getProfileImage() != null && !updateDTO.getProfileImage().isEmpty()) {
+            try {
+                String path = fileUploadService.uploadFile(updateDTO.getProfileImage(), "profiles");
+                receiverService.updateProfileImage(user, path);
+            } catch (Exception e) {
+                // Log error
+            }
+        }
+
+        if (updateDTO.getAddress() == null || updateDTO.getAddress().isBlank()) {
+            updateDTO.setAddress(formatAddress(
+                    updateDTO.getProvince(),
+                    updateDTO.getDistrict(),
+                    updateDTO.getPalika(),
+                    updateDTO.getWardNo(),
+                    null));
+        }
+
         receiverService.updateReceiverDetails(user, updateDTO);
-        return "redirect:/receiver/profile";
+        return "redirect:/receiver/profile?success=true";
     }
 
     @GetMapping("/search-users")
     public String searchUsers(@RequestParam(required = false) String query,
             @RequestParam(required = false) String type,
             Model model) {
-        List<User> users = java.util.Collections.emptyList();
+
+        List<User> users = Collections.emptyList();
 
         if (query != null && !query.isEmpty()) {
             if ("username".equals(type)) {
@@ -165,33 +187,40 @@ public class ReceiverController {
     }
 
     @PostMapping("/delete")
-    public String deleteAccount() {
+    public String deleteReceiverAccount() {
         User user = getCurrentUser();
         userService.deleteUser(user.getId());
         SecurityContextHolder.clearContext();
         return "redirect:/auth/login?deleted=true";
     }
 
-    private String composeAddress(String province, String district, String palika, String wardNo, String fallbackAddress) {
-        StringBuilder builder = new StringBuilder();
-        if (province != null && !province.isBlank()) {
-            builder.append(province.trim());
-        }
+    private String formatAddress(String province, String district, String palika, String wardNo, String fallback) {
+        StringBuilder sb = new StringBuilder();
+        if (province != null && !province.isBlank())
+            sb.append(province.trim());
+
         if (district != null && !district.isBlank()) {
-            if (builder.length() > 0) builder.append(", ");
-            builder.append(district.trim());
+            if (sb.length() > 0)
+                sb.append(", ");
+            sb.append(district.trim());
         }
+
         if (palika != null && !palika.isBlank()) {
-            if (builder.length() > 0) builder.append(", ");
-            builder.append(palika.trim());
+            if (sb.length() > 0)
+                sb.append(", ");
+            sb.append(palika.trim());
         }
+
         if (wardNo != null && !wardNo.isBlank()) {
-            if (builder.length() > 0) builder.append(" - ");
-            builder.append("Ward ").append(wardNo.trim());
+            if (sb.length() > 0)
+                sb.append(" - ");
+            sb.append("Ward ").append(wardNo.trim());
         }
-        if (builder.length() == 0 && fallbackAddress != null && !fallbackAddress.isBlank()) {
-            builder.append(fallbackAddress.trim());
+
+        if (sb.length() == 0 && fallback != null && !fallback.isBlank()) {
+            sb.append(fallback.trim());
         }
-        return builder.length() == 0 ? "Not Provided" : builder.toString();
+
+        return sb.length() == 0 ? "Not Provided" : sb.toString();
     }
 }

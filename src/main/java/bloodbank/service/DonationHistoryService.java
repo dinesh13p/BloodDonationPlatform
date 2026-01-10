@@ -16,9 +16,6 @@ public class DonationHistoryService {
     @Autowired
     private DonationHistoryRepository donationHistoryRepository;
 
-    @Autowired
-    private DonorService donorService;
-
     public DonationHistory createDonationHistory(User donor, User receiver) {
         DonationHistory history = new DonationHistory();
         history.setDonor(donor);
