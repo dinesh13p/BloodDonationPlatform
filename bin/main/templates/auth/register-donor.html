@@ -38,14 +38,12 @@
 </head>
 
 <body class="min-h-screen bg-gradient-hero overflow-auto relative">
-    <!-- Background decorations -->
     <div class="absolute inset-0 overflow-hidden">
         <div class="absolute -top-10 -left-10 w-40 h-40 bg-white/10 rounded-full blur-xl"></div>
         <div class="absolute top-20 right-20 w-32 h-32 bg-white/10 rounded-full blur-lg"></div>
         <div class="absolute bottom-40 left-20 w-24 h-24 bg-white/10 rounded-full blur-md"></div>
     </div>
 
-    <!-- Main Content -->
     <div class="lg:ml-72 relative z-10 min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12">
         <div class="w-full max-w-2xl">
             <div class="bg-white rounded-2xl shadow-glow p-8">
@@ -55,7 +53,13 @@
                     th:text="${error}"></div>
 
                 <form th:action="@{/auth/register/donor}" th:object="${registrationDTO}" method="post"
-                    class="space-y-6">
+                    enctype="multipart/form-data" class="space-y-6">
+                    <div>
+                        <label for="profileImage" class="block text-sm font-medium mb-2">Profile Image
+                            (Optional)</label>
+                        <input type="file" id="profileImage" th:field="*{profileImage}" accept="image/*"
+                            class="w-full h-12 pt-2 px-4 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all" />
+                    </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label for="username" class="block text-sm font-medium mb-2">Username *</label>
@@ -203,11 +207,8 @@
         updateAddress();
     </script>
 
-
-    <!-- Public Sidebar (included after main content to avoid CSRF issues) -->
     <div th:replace="~{fragments/public-sidebar :: publicSidebar}"></div>
 
-    <!-- Public Sidebar Script -->
     <script th:replace="~{fragments/public-sidebar :: publicSidebarScript}"></script>
 </body>
 

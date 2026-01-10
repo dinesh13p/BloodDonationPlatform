@@ -36,8 +36,9 @@ The platform operates with three main user roles, each with specific workflows a
 - **Verified Users**: View all approved donors and receivers
 - **User Management**: 
   - Approve or reject pending accounts
-  - Restrict or delete user accounts
-  - Add stars to donors for verified donations
+  - View full details (including profile image) of pending and verified users
+  - Restrict or delete user accounts (safe deletion with history cleanup)
+  - Unrestrict blocked accounts
 - **Navigation**: Accessible through header (Pending Users, Verified Users, Logout)
 
 ### Donor Workflow
@@ -61,7 +62,11 @@ The platform operates with three main user roles, each with specific workflows a
   - Filter by Address (Province, District, Municipality, Ward)
   - View available donors with contact information
   - Verify donations after receiving blood
-- **Profile Management**: Edit profile details
+  - View available donors with contact information
+  - Verify donations after receiving blood
+- **Profile Management**: 
+  - Edit profile details
+  - Upload profile image
 - **Navigation**: Accessible through header (Profile, Search Donors, Logout)
 
 ## Key Features
@@ -89,7 +94,7 @@ The platform operates with three main user roles, each with specific workflows a
 - Adaptive layouts for all screen sizes
 
 ### File Uploads
-- Profile image uploads for donors
+- Profile image uploads for Donors and Receivers
 - Files stored in `uploads/` directory
 - Maximum file size: 10MB
 
@@ -292,8 +297,8 @@ The system includes a default admin account created by `DataInitializer`:
 - `POST /admin/approve` - Approve user
 - `POST /admin/reject` - Reject user
 - `POST /admin/restrict` - Restrict user account
+- `POST /admin/unrestrict` - Unrestrict user account
 - `POST /admin/delete` - Delete user account
-- `POST /admin/add-star` - Add star to donor
 
 ### Donor Endpoints (Requires DONOR role)
 - `GET /donor/dashboard` - Donor dashboard (home page)
@@ -322,7 +327,7 @@ The system includes a default admin account created by `DataInitializer`:
 
 #### `donor_details`
 - Donor-specific information
-- Fields: id, user_id (FK), blood_group, date_of_birth, address, province, district, palika, ward_no, availability, medical_history, profile_image, bio, stars, last_donation_date
+- Fields: id, user_id (FK), blood_group, date_of_birth, address, province, district, palika, ward_no, availability, medical_history, profile_image, bio, last_donation_date
 - Relationship: One-to-One with User
 
 #### `receiver_details`
@@ -374,7 +379,6 @@ The system includes a default admin account created by `DataInitializer`:
 ✅ Public pages (About, Blog, FAQ)  
 ✅ File upload for profile images  
 ✅ Donation verification system  
-✅ Star rating for donors  
 
 ## License
 

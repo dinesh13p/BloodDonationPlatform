@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Search Donors - Sabaiko Blood Bank</title>
+    <title>Search Donors</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         :root {
@@ -93,11 +93,11 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
                             <div>
                                 <label for="bloodGroup" class="block text-sm font-medium text-gray-700 mb-2">
-                                    Blood Group <span class="text-red-500">*</span>
+                                    Blood Type <span class="text-red-500">*</span>
                                 </label>
                                 <select id="bloodGroup" name="bloodGroup" required
                                     class="w-full h-12 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all">
-                                    <option value="">-- Select Blood Group --</option>
+                                    <option value="">-- Select Blood Type --</option>
                                     <option th:each="bg : ${bloodGroups}" th:value="${bg.name()}"
                                         th:text="${bg.displayName}" th:selected="${selectedBloodGroup == bg.name()}">
                                     </option>
@@ -143,8 +143,8 @@
                                 </svg>
                                 Search Results
                             </span>
-                            <span class="bg-white text-primary px-3 py-1 rounded-full text-sm font-semibold"
-                                th:text="${#lists.size(donors)} + ' found'"></span>
+                            <!-- <span class="bg-white text-primary px-3 py-1 rounded-full text-sm font-semibold"
+                                th:text="${#lists.size(donors)} + ' found'"></span> -->
                         </h2>
                     </div>
 
@@ -157,7 +157,8 @@
                                     d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
                             </svg>
                             <p class="text-gray-600 text-lg font-medium">No available donors found with blood group
-                                <strong th:text="${selectedBloodGroup}"></strong>.</p>
+                                <strong th:text="${selectedBloodGroup}"></strong>.
+                            </p>
                         </div>
 
                         <!-- Table -->
@@ -167,11 +168,10 @@
                                     <tr class="border-b border-gray-200">
                                         <th class="text-left py-3 px-4 font-semibold text-gray-700 text-sm">#</th>
                                         <th class="text-left py-3 px-4 font-semibold text-gray-700 text-sm">Name</th>
-                                        <th class="text-left py-3 px-4 font-semibold text-gray-700 text-sm">Blood Group
+                                        <th class="text-left py-3 px-4 font-semibold text-gray-700 text-sm">Blood Type
                                         </th>
                                         <th class="text-left py-3 px-4 font-semibold text-gray-700 text-sm">Address</th>
                                         <th class="text-left py-3 px-4 font-semibold text-gray-700 text-sm">Contact</th>
-                                        <th class="text-left py-3 px-4 font-semibold text-gray-700 text-sm">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-gray-100">
@@ -221,20 +221,7 @@
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="py-4 px-4">
-                                            <form th:action="@{/receiver/verify-donation}" method="post" class="inline">
-                                                <input type="hidden" name="donorId" th:value="${donor.user.id}">
-                                                <button type="submit"
-                                                    class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-                                                    <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor"
-                                                        viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                            stroke-width="2" d="M5 13l4 4L19 7" />
-                                                    </svg>
-                                                    Verify
-                                                </button>
-                                            </form>
-                                        </td>
+
                                     </tr>
                                 </tbody>
                             </table>

@@ -55,7 +55,13 @@
                     th:text="${error}"></div>
 
                 <form th:action="@{/auth/register/receiver}" th:object="${registrationDTO}" method="post"
-                    class="space-y-6">
+                    enctype="multipart/form-data" class="space-y-6">
+                    <div>
+                        <label for="profileImage" class="block text-sm font-medium mb-2">Profile Image
+                            (Optional)</label>
+                        <input type="file" id="profileImage" th:field="*{profileImage}" accept="image/*"
+                            class="w-full h-12 pt-2 px-4 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all" />
+                    </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label for="username" class="block text-sm font-medium mb-2">Username *</label>

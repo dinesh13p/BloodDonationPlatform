@@ -23,14 +23,16 @@
 </head>
 
 <body class="min-h-screen bg-gray-50">
-    <!-- Sidebar -->
     <div th:replace="~{fragments/sidebar :: sidebar}"></div>
 
     <div class="lg:ml-72 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <h2 class="text-3xl font-bold mb-6">Pending Users</h2>
 
         <div class="bg-white rounded-lg shadow border border-gray-200 overflow-hidden">
-            <div class="overflow-x-auto">
+            <div th:if="${#lists.isEmpty(pendingUsers)}" class="p-6 text-center text-gray-500">
+                No pending users found.
+            </div>
+            <div th:if="${!#lists.isEmpty(pendingUsers)}" class="overflow-x-auto">
                 <table class="min-w-full">
                     <thead class="bg-gray-50 border-b border-gray-200">
                         <tr>
@@ -56,10 +58,15 @@
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600" th:text="${user.phone}"></td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <span class="px-2 py-1 text-xs font-semibold rounded-full"
-                                    th:classappend="${user.role == T(bloodbank.entity.UserRole).DONOR} ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800'"
+                                    th:classappend="${user.role.name() == 'DONOR'} ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800'"
                                     th:text="${user.role}"></span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium flex gap-2">
+                                <button onclick="openPendingDetails(this.getAttribute('data-user-id'))"
+                                    th:data-user-id="${user.id}"
+                                    class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-xs font-semibold">
+                                    View Details
+                                </button>
                                 <form th:action="@{/admin/approve}" method="post" class="inline">
                                     <input type="hidden" name="userId" th:value="${user.id}">
                                     <button type="submit"
@@ -77,6 +84,64 @@
             </div>
         </div>
     </div>
+
+    <div id="pendingDetailsModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title"
+        role="dialog" aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"
+                onclick="closePendingDetailsModal()"></div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            <div id="modalContent"
+                class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full">
+                <div class="p-6 text-center">
+                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+                    <p class="mt-2 text-gray-500">Loading details...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        function openPendingDetails(userId) {
+            const modal = document.getElementById('pendingDetailsModal');
+            const content = document.getElementById('modalContent');
+
+            // Show modal with loading state
+            modal.classList.remove('hidden');
+
+            // Fetch details
+            fetch('/admin/pending-details/' + userId)
+                .then(response => response.text())
+                .then(html => {
+                    content.innerHTML = html;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    content.innerHTML = '<div class="p-6 text-center text-red-600">Error loading details. Please try again.</div>';
+                });
+        }
+
+        function closePendingDetailsModal() {
+            const modal = document.getElementById('pendingDetailsModal');
+            modal.classList.add('hidden');
+            // Reset content after delay to allow transition if any (currently instant)
+            setTimeout(() => {
+                document.getElementById('modalContent').innerHTML = `
+                    <div class="p-6 text-center">
+                        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+                        <p class="mt-2 text-gray-500">Loading details...</p>
+                    </div>
+                `;
+            }, 300);
+        }
+
+        // Close on Escape key
+        document.addEventListener('keydown', function (event) {
+            if (event.key === "Escape") {
+                closePendingDetailsModal();
+            }
+        });
+    </script>
 </body>
 
 </html>
