@@ -70,6 +70,12 @@ public class AuthController {
             return "auth/register-donor";
         }
 
+        if (registrationDTO.getBloodGroup() == null) {
+            model.addAttribute("error", "Blood group is required");
+            model.addAttribute("bloodGroups", BloodGroup.values());
+            return "auth/register-donor";
+        }
+
         if (userService.findByUsername(registrationDTO.getUsername()).isPresent()) {
             model.addAttribute("error", "Username already exists");
             model.addAttribute("bloodGroups", BloodGroup.values());
@@ -101,21 +107,27 @@ public class AuthController {
             try {
                 profileImagePath = fileUploadService.uploadFile(registrationDTO.getProfileImage(), "profiles");
             } catch (Exception e) {
-                // Ignore upload failure for now
+                System.err.println("Profile image upload failed: " + e.getMessage());
             }
         }
 
         user = userService.registerUser(user);
-        donorService.registerDonorDetails(
-                user,
-                registrationDTO.getBloodGroup(),
-                registrationDTO.getAddress(),
-                registrationDTO.getProvince(),
-                registrationDTO.getDistrict(),
-                registrationDTO.getPalika(),
-                registrationDTO.getWardNo(),
-                registrationDTO.getBio(),
-                profileImagePath);
+
+        try {
+            donorService.registerDonorDetails(
+                    user,
+                    registrationDTO.getBloodGroup(),
+                    registrationDTO.getAddress(),
+                    registrationDTO.getProvince(),
+                    registrationDTO.getDistrict(),
+                    registrationDTO.getPalika(),
+                    registrationDTO.getWardNo(),
+                    registrationDTO.getBio(),
+                    profileImagePath);
+        } catch (Exception e) {
+            System.err.println("DONOR DETAILS SAVE FAILED: " + e.getMessage());
+            e.printStackTrace();
+        }
 
         String encodedUsername = URLEncoder.encode(registrationDTO.getUsername(), StandardCharsets.UTF_8);
         return "redirect:/auth/login?registered=true&username=" + encodedUsername;
@@ -173,7 +185,7 @@ public class AuthController {
             try {
                 profileImagePath = fileUploadService.uploadFile(registrationDTO.getProfileImage(), "profiles");
             } catch (Exception e) {
-                // Ignore
+                System.err.println("Profile image upload failed: " + e.getMessage());
             }
         }
 
