@@ -4,6 +4,7 @@ import org.springframework.web.multipart.MultipartFile;
 import bloodbank.entity.BloodGroup;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+
 import jakarta.validation.constraints.Size;
 
 public class RegistrationDTO {
@@ -35,7 +36,6 @@ public class RegistrationDTO {
     private String palika;
     private String wardNo;
 
-    @NotBlank(message = "Address is required")
     private String address;
 
     private String bio;
