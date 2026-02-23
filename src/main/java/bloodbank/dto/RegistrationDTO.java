@@ -147,11 +147,11 @@ public class RegistrationDTO {
         this.bio = bio;
     }
 
-    public org.springframework.web.multipart.MultipartFile getProfileImage() {
+    public MultipartFile getProfileImage() {
         return profileImage;
     }
 
-    public void setProfileImage(org.springframework.web.multipart.MultipartFile profileImage) {
+    public void setProfileImage(MultipartFile profileImage) {
         this.profileImage = profileImage;
     }
 }
